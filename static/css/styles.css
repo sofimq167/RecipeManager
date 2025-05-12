@@ -1,0 +1,45 @@
+body {
+    background-color: #f5f5f5;
+    font-family: 'Arial', sans-serif;
+}
+
+.card {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.navbar {
+    margin-bottom: 20px;
+}
+
+.alert {
+    margin-bottom: 20px;
+}
+
+
+.landing-container {
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.landing-box {
+    background-color: white;
+    border-radius: 10px;
+    padding: 40px;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    text-align: center;
+}
+
+.btn-landing {
+    padding: 12px 30px;
+    font-size: 18px;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+}
+
+.btn-landing:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}

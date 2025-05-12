@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio{% endblock %}
+
+{% block content %}
+<div class="welcome-container">
+    <h2>Bienvenido, {{ current_user.username }}!</h2>
+    <p>Has iniciado sesión correctamente.</p>
+    <div class="dashboard-content">
+        
+    </div>
+</div>
+{% endblock %}
