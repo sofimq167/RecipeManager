@@ -1,20 +1,30 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>ChefBox - Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="#">Mi Aplicación</a>
+            <a class="navbar-brand" href="{{ url_for('dashboard') }}">ChefBox</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('dashboard') }}">Mis Recetas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('tags') }}">Mis Etiquetas</a>
+                    </li>
+                </ul>
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
                         <span class="nav-link">Bienvenido, {{ user_name }}</span>
@@ -28,27 +38,74 @@
     </nav>
 
     <div class="container mt-5">
-        <div class="row">
+        <div class="row mb-4">
             <div class="col-12">
                 {% with messages = get_flashed_messages(with_categories=true) %}
                     {% if messages %}
                         {% for category, message in messages %}
-                            <div class="alert alert-{{ category }}">{{ message }}</div>
+                            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
                         {% endfor %}
                     {% endif %}
                 {% endwith %}
-                
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Dashboard</h3>
-                    </div>
-                    <div class="card-body">
-                        <h5 class="card-title">Área protegida</h5>
-                        <p class="card-text">Esta es una página vacía protegida. Solo usuarios autenticados pueden verla.</p>
-                    </div>
-                </div>
             </div>
         </div>
+        
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <h2>Mis Recetas</h2>
+            </div>
+            <div class="col-md-6 text-end">
+                <a href="{{ url_for('create_recipe') }}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Crear Nueva Receta
+                </a>
+            </div>
+        </div>
+        
+        {% if recipes %}
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                {% for recipe in recipes %}
+                    <div class="col">
+                        <div class="card h-100">
+                            {% if recipe.image_url %}
+                                <img src="{{ recipe.image_url }}" class="card-img-top" alt="{{ recipe.title }}" style="height: 180px; object-fit: cover;">
+                            {% else %}
+                                <div class="bg-light text-center py-5">
+                                    <i class="bi bi-card-image text-muted" style="font-size: 3rem;"></i>
+                                </div>
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ recipe.title }}</h5>
+                                <p class="card-text text-muted">
+                                    <small>
+                                        <i class="bi bi-clock"></i> {{ recipe.cooking_time }} min | 
+                                        <i class="bi bi-people"></i> {{ recipe.servings }} porciones | 
+                                        <i class="bi bi-stars"></i> Dificultad: {{ recipe.difficulty_level }}/5
+                                    </small>
+                                </p>
+                                <p class="card-text">{{ recipe.description[:100] }}{% if recipe.description|length > 100 %}...{% endif %}</p>
+                            </div>
+                            <div class="card-footer bg-white d-flex justify-content-between">
+                                <small class="text-muted">Creada: {{ recipe.created_at|format_date }}</small>
+                                <div>
+                                    <a href="{{ url_for('view_recipe', recipe_id=recipe._id) }}" class="btn btn-sm btn-outline-primary">Ver</a>
+                                    <a href="{{ url_for('delete_recipe', recipe_id=recipe._id) }}" class="btn btn-sm btn-outline-danger ms-1" 
+                                       onclick="return confirm('¿Estás seguro de que deseas eliminar esta receta?')">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                <p class="mb-0">Aún no tienes recetas. ¡Comienza a crear tus propias recetas ahora!</p>
+            </div>
+        {% endif %}
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
