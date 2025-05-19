@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bienvenido</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>ChefBox-Bienvenido</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
     <div class="landing-container">
@@ -18,11 +19,263 @@
                 {% endif %}
             {% endwith %}
             
-            <h1 class="landing-title">Bienvenido a Mi Aplicación</h1>
-            <p class="lead mb-4">HOLIII.</p>
-            <a href="{{ url_for('login') }}" class="btn btn-primary btn-landing">Iniciar Sesión</a>
         </div>
     </div>
+    <!-- Navbar -->
+    <nav class="navbar navbar-style navbar-expand-lg sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <img class="img-nav" src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" style="height: 40px;">
+                
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#inicio">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#caracteristicas">Características</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#sobre-nosotros">Sobre Nosotros</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#beneficios">Beneficios</a>
+                    </li>
+                </ul>
+                <div class="ms-3">
+                    <a href="{{ url_for('login') }}" class="btn btn-outline-primary me-2">Iniciar Sesión</a>
+                    <a href="{{ url_for('register') }}" class="btn btn-primary">Registrarse</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section" id="inicio">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="hero-title">Organiza todas tus recetas favoritas en un solo lugar</h1>
+                    <p class="hero-subtitle">ChefBox es tu solución para guardar, organizar y planificar tus comidas semanales de manera sencilla y eficiente.</p>
+                    <div class="d-flex flex-wrap">
+                        <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg me-3 mb-3">Comenzar Ahora</a>
+                        <a href="#como-funciona" class="btn btn-outline-primary btn-lg mb-3">¿Cómo Funciona?</a>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                   <img src="/api/placeholder/600/400" alt="ChefBox App" class="img-fluid app-screenshot" />
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-5" id="caracteristicas">
+        <div class="container py-5">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold fs-1">Características Principales</h2>
+                <p class="text-muted fs-5 mx-auto" style="max-width: 700px;">Descubre todo lo que ChefBox puede hacer para transformar tu experiencia en la cocina.</p>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-card text-center">
+                        <i class="fas fa-book-open feature-icon"></i>
+                        <h3 class="feature-title">Guarda tus Recetas</h3>
+                        <p class="feature-desc">Almacena todas tus recetas favoritas en un solo lugar para acceder cuando las necesites.</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-card text-center">
+                        <i class="fas fa-search feature-icon"></i>
+                        <h3 class="feature-title">Búsqueda Avanzada</h3>
+                        <p class="feature-desc">Encuentra tus recetas por nombre, ingrediente o categoría en segundos.</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-card text-center">
+                        <i class="fas fa-calendar-alt feature-icon"></i>
+                        <h3 class="feature-title">Planifica tus Comidas</h3>
+                        <p class="feature-desc">Asigna recetas a días y momentos específicos para organizar tu semana.</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-card text-center">
+                        <i class="fas fa-edit feature-icon"></i>
+                        <h3 class="feature-title">Personalización Total</h3>
+                        <p class="feature-desc">Edita y adapta las recetas a tu gusto para hacerlas totalmente tuyas.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-section" id="sobre-nosotros">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h2 class="about-title">¿Por qué nació ChefBox?</h2>
+                    <p class="about-text">¿Alguna vez te has perdido en un mar de videos culinarios en Instagram? <strong>¡La revolución gastronómica digital está aquí!</strong> Los influencers nos inspiran diariamente con creaciones que nos hacen agua la boca y nos invitan a transformar nuestra cocina en un espacio de creatividad y sabor.</p>
+                    <p class="about-text">Pero seamos sinceros... ¿Cuántas veces has pensado <em>"¡Esto lo tengo que hacer!"</em> para luego olvidar completamente dónde guardaste esa receta del postre perfecto? O peor aún, ¿cuántas recetas familiares invaluables—como la legendaria torta de la abuela—corren el riesgo de perderse entre conversaciones y capturas de pantalla?</p>
+                    <p class="about-text">Entre el caos digital de TikTok, los tableros infinitos de Pinterest y las historias efímeras de Instagram, tus descubrimientos culinarios se desvanecen tan rápido como aparecen. <strong>¡No más búsquedas desesperadas ni recetas perdidas!</strong></p>
+                    <p class="about-text">Por eso creamos <strong>ChefBox</strong> — tu aliado gastronómico personal. No es solo una app, es tu biblioteca culinaria digital donde cada receta que te enamora encuentra un hogar permanente, organizado y accesible con un solo toque.</p>
+                </div>
+                <div class="col-lg-6">
+                    <img src="/api/placeholder/600/400" alt="ChefBox App Interface" class="img-fluid app-screenshot about-image" />
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it Works -->
+    <section class="py-5 bg-light" id="como-funciona">
+        <div class="container py-5">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold fs-1">¿Cómo Funciona?</h2>
+                <p class="text-muted fs-5 mx-auto" style="max-width: 700px;">ChefBox es increíblemente fácil de usar. Te mostramos cómo:</p>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center p-4">
+                            <div class="rounded-circle bg-primary bg-opacity-10 p-3 d-inline-block mb-3">
+                                <i class="fas fa-plus-circle text-primary fs-1"></i>
+                            </div>
+                            <h3 class="h4 mb-3">1. Crea tus recetas</h3>
+                            <p class="text-muted mb-0">Añade ingredientes, pasos, tiempos de preparación y categorías para organizar todo tu recetario personal.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center p-4">
+                            <div class="rounded-circle bg-primary bg-opacity-10 p-3 d-inline-block mb-3">
+                                <i class="fas fa-calendar-plus text-primary fs-1"></i>
+                            </div>
+                            <h3 class="h4 mb-3">2. Planifica tu semana</h3>
+                            <p class="text-muted mb-0">Arrastra y suelta tus recetas favoritas en cada día y momento de la semana para crear tu plan de comidas.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center p-4">
+                            <div class="rounded-circle bg-primary bg-opacity-10 p-3 d-inline-block mb-3">
+                                <i class="fas fa-utensils text-primary fs-1"></i>
+                            </div>
+                            <h3 class="h4 mb-3">3. ¡A cocinar!</h3>
+                            <p class="text-muted mb-0">Sigue tus recetas paso a paso y disfruta de una experiencia culinaria organizada y sin estrés.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="benefits-section" id="beneficios">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-5">
+                    <h2 class="about-title mb-4">Beneficios de usar ChefBox</h2>
+                    <p class="about-text mb-5">ChefBox ofrece múltiples beneficios que transforman la experiencia de cocinar en casa:</p>
+                    
+                    <div class="benefit-item">
+                        <div class="benefit-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div>
+                            <h4 class="benefit-title">Ahorra tiempo y dinero</h4>
+                            <p class="benefit-desc">Filtra recetas según los ingredientes que ya tienes, evitando compras de último minuto.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="benefit-item">
+                        <div class="benefit-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div>
+                            <h4 class="benefit-title">Reduce el estrés</h4>
+                            <p class="benefit-desc">Elimina la preocupación diaria de "¿qué voy a cocinar hoy?" con planes de comida organizados.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="benefit-item">
+                        <div class="benefit-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div>
+                            <h4 class="benefit-title">Preserva recetas familiares</h4>
+                            <p class="benefit-desc">Guarda esas recetas especiales que han pasado de generación en generación.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="benefit-item">
+                        <div class="benefit-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div>
+                            <h4 class="benefit-title">Diversifica tu alimentación</h4>
+                            <p class="benefit-desc">Descubre nuevas combinaciones y varía tu menú semanal con facilidad.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-7">
+                    <img src="/api/placeholder/700/500" alt="Chef Box Benefits" class="img-fluid app-screenshot" />
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2 class="cta-title">¿Listo para revolucionar tu experiencia en la cocina?</h2>
+            <p class="cta-text">Únete a ChefBox hoy y comienza a organizar tus recetas favoritas, planificar tus comidas y disfrutar de una experiencia culinaria sin complicaciones.</p>
+            <a href="{{ url_for('register') }}" class="btn btn-light btn-lg">Comenzar Ahora - ¡Es Gratis!</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <h3 class="footer-title">ChefBox</h3>
+                    <p>Tu solución para guardar, organizar y planificar todas tus recetas favoritas en un solo lugar.</p>
+                </div>
+                
+                <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
+                    <h3 class="footer-title">Enlaces</h3>
+                    <ul class="footer-links">
+                        <li><a href="#inicio">Inicio</a></li>
+                        <li><a href="#caracteristicas">Características</a></li>
+                        <li><a href="#como-funciona">Cómo Funciona</a></li>
+                        <li><a href="#sobre-nosotros">Sobre Nosotros</a></li>
+                        <li><a href="#beneficios">Beneficios</a></li>
+                    </ul>
+                </div>
+                
+                
+            </div>
+            
+            <div class="text-center copyright">
+                <p>&copy; 2025 ChefBox. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
