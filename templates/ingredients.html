@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChefBox - Gestionar Ingredientes</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('dashboard') }}">ChefBox</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('dashboard') }}">Mis Recetas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('tags') }}">Mis Etiquetas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('ingredients') }}">Mis Ingredientes</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <span class="nav-link">Bienvenido, {{ user_name }}</span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('logout') }}">Cerrar Sesión</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <div class="row mb-4">
+            <div class="col-12">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+        </div>
+        
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <h2>Mis Ingredientes</h2>
+            </div>
+            <div class="col-md-6 text-end">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addIngredientModal">
+                    <i class="bi bi-plus-circle"></i> Crear Nuevo Ingrediente
+                </button>
+            </div>
+        </div>
+        
+        {% if ingredients %}
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Unidad</th>
+                            <th>Proteínas (g)</th>
+                            <th>Carbohidratos (g)</th>
+                            <th>Grasas (g)</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ingredient in ingredients %}
+                            <tr>
+                                <td>{{ ingredient.name }}</td>
+                                <td>{{ ingredient.unit }}</td>
+                                <td>{{ ingredient.protein }}g</td>
+                                <td>{{ ingredient.carbs }}g</td>
+                                <td>{{ ingredient.fat }}g</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-secondary edit-ingredient" 
+                                            data-id="{{ ingredient._id }}"
+                                            data-name="{{ ingredient.name }}"
+                                            data-unit="{{ ingredient.unit }}"
+                                            data-protein="{{ ingredient.protein }}"
+                                            data-carbs="{{ ingredient.carbs }}"
+                                            data-fat="{{ ingredient.fat }}"
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#editIngredientModal">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <a href="{{ url_for('delete_ingredient', ingredient_id=ingredient._id) }}" 
+                                       class="btn btn-sm btn-outline-danger" 
+                                       onclick="return confirm('¿Estás seguro de que deseas eliminar este ingrediente? Esto podría afectar a las recetas que lo utilizan.')">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                <p class="mb-0">Aún no tienes ingredientes. ¡Comienza a crear tus propios ingredientes para usar en tus recetas!</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Modal para Agregar Ingrediente -->
+    <div class="modal fade" id="addIngredientModal" tabindex="-1" aria-labelledby="addIngredientModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addIngredientModalLabel">Crear Nuevo Ingrediente</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="POST" action="{{ url_for('create_ingredient') }}">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nombre <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="unit" class="form-label">Unidad de Medida <span class="text-danger">*</span></label>
+                            <select class="form-select" id="unit" name="unit" required>
+                                <option value="">Selecciona una unidad</option>
+                                <option value="g">Gramos (g)</option>
+                                <option value="ml">Mililitros (ml)</option>
+                                <option value="taza">Tazas</option>
+                                <option value="cdta">Cucharaditas</option>
+                                <option value="cda">Cucharadas</option>
+                                <option value="unidad">Unidades</option>
+                                <option value="pizca">Pizca</option>
+                                <option value="al gusto">Al gusto</option>
+                            </select>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="protein" class="form-label">Proteínas (g)</label>
+                                    <input type="number" class="form-control" id="protein" name="protein" min="0" step="0.1" value="0">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="carbs" class="form-label">Carbohidratos (g)</label>
+                                    <input type="number" class="form-control" id="carbs" name="carbs" min="0" step="0.1" value="0">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="fat" class="form-label">Grasas (g)</label>
+                                    <input type="number" class="form-control" id="fat" name="fat" min="0" step="0.1" value="0">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Editar Ingrediente -->
+    <div class="modal fade" id="editIngredientModal" tabindex="-1" aria-labelledby="editIngredientModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editIngredientModalLabel">Editar Ingrediente</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="POST" action="{{ url_for('edit_ingredient') }}">
+                    <input type="hidden" id="edit_ingredient_id" name="ingredient_id">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="edit_name" class="form-label">Nombre <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="edit_name" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_unit" class="form-label">Unidad de Medida <span class="text-danger">*</span></label>
+                            <select class="form-select" id="edit_unit" name="unit" required>
+                                <option value="">Selecciona una unidad</option>
+                                <option value="g">Gramos (g)</option>
+                                <option value="ml">Mililitros (ml)</option>
+                                <option value="taza">Tazas</option>
+                                <option value="cdta">Cucharaditas</option>
+                                <option value="cda">Cucharadas</option>
+                                <option value="unidad">Unidades</option>
+                                <option value="pizca">Pizca</option>
+                                <option value="al gusto">Al gusto</option>
+                            </select>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="edit_protein" class="form-label">Proteínas (g)</label>
+                                    <input type="number" class="form-control" id="edit_protein" name="protein" min="0" step="0.1">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="edit_carbs" class="form-label">Carbohidratos (g)</label>
+                                    <input type="number" class="form-control" id="edit_carbs" name="carbs" min="0" step="0.1">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="edit_fat" class="form-label">Grasas (g)</label>
+                                    <input type="number" class="form-control" id="edit_fat" name="fat" min="0" step="0.1">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            const editButtons = document.querySelectorAll('.edit-ingredient');
+            editButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    const name = this.getAttribute('data-name');
+                    const unit = this.getAttribute('data-unit');
+                    const protein = this.getAttribute('data-protein');
+                    const carbs = this.getAttribute('data-carbs');
+                    const fat = this.getAttribute('data-fat');
+                    
+                    document.getElementById('edit_ingredient_id').value = id;
+                    document.getElementById('edit_name').value = name;
+                    document.getElementById('edit_unit').value = unit;
+                    document.getElementById('edit_protein').value = protein;
+                    document.getElementById('edit_carbs').value = carbs;
+                    document.getElementById('edit_fat').value = fat;
+                });
+            });
+        });
+    </script>
+</body>
+</html>

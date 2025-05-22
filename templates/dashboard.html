@@ -24,6 +24,10 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('tags') }}">Mis Etiquetas</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('ingredients') }}">Mis Ingredientes</a>
+                    </li>
+
                 </ul>
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
@@ -88,13 +92,19 @@
                                 <p class="card-text">{{ recipe.description[:100] }}{% if recipe.description|length > 100 %}...{% endif %}</p>
                             </div>
                             <div class="card-footer bg-white d-flex justify-content-between">
-                                <small class="text-muted">Creada: {{ recipe.created_at|format_date }}</small>
+                                <small class="text-muted">
+                                    Creada: {{ recipe.created_at|format_date if recipe.created_at else 'Fecha no disponible' }}
+                                </small>
                                 <div>
                                     <a href="{{ url_for('view_recipe', recipe_id=recipe._id) }}" class="btn btn-sm btn-outline-primary">Ver</a>
                                     <a href="{{ url_for('delete_recipe', recipe_id=recipe._id) }}" class="btn btn-sm btn-outline-danger ms-1" 
                                        onclick="return confirm('¿Estás seguro de que deseas eliminar esta receta?')">
                                         <i class="bi bi-trash"></i>
                                     </a>
+                                    <a href="{{ url_for('edit_recipe', recipe_id=recipe._id) }}" class="btn btn-sm btn-outline-secondary me-1">
+                                        <i class="bi bi-pencil-square"></i> Editar
+                                    </a>
+
                                 </div>
                             </div>
                         </div>
