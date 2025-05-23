@@ -1,0 +1,178 @@
+<nav class="navbar navbar-style navbar-expand-lg sticky-top">
+    <div class="row w-100 align-items-center">
+
+        {% if request.path == '/' %}
+
+        <a class="navbar-brand col-md-1 ms-5" href="#">
+            <img class="img-nav" src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo"
+                style="height: 40px;">
+
+        </a>
+
+        {% else %}
+
+        <a class="navbar-brand col-md-1 ms-5" href="{{ url_for('index') }}">
+            <img class="img-nav" src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo"
+                style="height: 40px;">
+
+        </a>
+
+        {% endif %}
+
+        <button class="navbar-toggler col-md-4" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse justify-content-end col-md-3" id="navbarNav">
+
+            {% if request.path == '/' %}
+
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="#inicio">Inicio</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#caracteristicas">Características</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#sobre-nosotros">Sobre Nosotros</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#beneficios">Beneficios</a>
+                </li>
+            </ul>
+
+            {% elif request.path == url_for('dashboard') %}
+
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link active" href="{{ url_for('dashboard') }}">Mis Recetas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('tags') }}">Mis Etiquetas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('ingredients') }}">Mis Ingredientes</a>
+                </li>
+            </ul>
+
+            {% elif request.path == url_for('create_recipe') %}
+
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('dashboard') }}">Mis Recetas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('tags') }}">Mis Etiquetas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('ingredients') }}">Mis Ingredientes</a>
+                </li>
+            </ul>
+
+            {% elif request.path.startswith('/recipes/edit/') %}
+
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('dashboard') }}">Mis Recetas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('tags') }}">Mis Etiquetas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('ingredients') }}">Mis Ingredientes</a>
+                </li>
+            </ul>
+
+            {% elif request.path.startswith('/recipes/') %}
+
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('dashboard') }}">Mis Recetas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('tags') }}">Mis Etiquetas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('ingredients') }}">Mis Ingredientes</a>
+                </li>
+            </ul>
+
+            {% elif request.path == url_for('ingredients') %}
+
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('dashboard') }}">Mis Recetas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('tags') }}">Mis Etiquetas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="{{ url_for('ingredients') }}">Mis Ingredientes</a>
+                </li>
+            </ul>
+
+            {% elif request.path == url_for('tags') %}
+
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('dashboard') }}">Mis Recetas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="{{ url_for('tags') }}">Mis Etiquetas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('ingredients') }}">Mis Ingredientes</a>
+                </li>
+            </ul>
+
+            {% else %}
+
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('index') }}#inicio">Inicio</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('index') }}#caracteristicas">Características</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('index') }}#sobre-nosotros">Sobre Nosotros</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('index') }}#beneficios">Beneficios</a>
+                </li>
+            </ul>
+
+            {% endif %}
+
+
+
+        </div>
+
+        <div class="ms-3 col-md-4 d-flex justify-content-end">
+
+            {% if request.path == url_for('login') %}
+
+            <a href="{{ url_for('register') }}" class="btn btn-primary me-2">Registrarse</a>
+
+            {% elif request.path == url_for('register') %}
+
+            <a href="{{ url_for('login') }}" class="btn btn-outline-primary me-2">Iniciar Sesión</a>
+
+            {% elif request.path == url_for('dashboard') %}
+
+            <span class="nav-link">Bienvenido, {{ user_name }}</span>
+            <a class="nav-link" href="{{ url_for('logout') }}">Cerrar Sesión</a>
+
+            {% else %}
+
+            <a href="{{ url_for('login') }}" class="btn btn-outline-primary me-2">Iniciar Sesión</a>
+            <a href="{{ url_for('register') }}" class="btn btn-primary">Registrarse</a>
+
+            {% endif %}
+
+
+        </div>
+    </div>
+</nav>

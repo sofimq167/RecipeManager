@@ -1,227 +1,169 @@
+{% extends "base.html" %}
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChefBox - Crear Receta</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-</head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="{{ url_for('dashboard') }}">ChefBox</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('dashboard') }}">Mis Recetas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('tags') }}">Mis Etiquetas</a>
-                    </li>
-                </ul>
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <span class="nav-link">Bienvenido, {{ user_name }}</span>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('logout') }}">Cerrar Sesión</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+{% block title %}Crear receta{% endblock %}
 
-    <div class="container mt-5">
-        <div class="row mb-4">
-            <div class="col-12">
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                        {% for category, message in messages %}
-                            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                                {{ message }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                        {% endfor %}
-                    {% endif %}
-                {% endwith %}
+{% block content %}
+
+
+<div class="container mt-5 mb-3">
+    <div class="row mb-4">
+        <div class="col-12">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
         </div>
-        
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h3 class="mb-0">Crear Nueva Receta</h3>
-                        <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary btn-sm">
-                            <i class="bi bi-arrow-left"></i> Volver
-                        </a>
-                    </div>
-                    <div class="card-body">
-                        <form method="POST" action="{{ url_for('create_recipe') }}">
-                            <div class="row mb-3">
-                                <div class="col-md-8">
-                                    <div class="mb-3">
-                                        <label for="title" class="form-label">Título <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" id="title" name="title" required>
-                                    </div>
-                                    
-                                    <div class="mb-3">
-                                        <label for="description" class="form-label">Descripción <span class="text-danger">*</span></label>
-                                        <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
-                                    </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0">Crear Nueva Receta</h3>
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-arrow-left"></i> Volver
+                    </a>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('create_recipe') }}">
+                        <div class="row mb-3">
+                            <div class="col-md-8">
+                                <div class="mb-3">
+                                    <label for="title" class="form-label">Título <span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="title" name="title" required>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="image_url" class="form-label">URL de la imagen</label>
-                                        <input type="url" class="form-control" id="image_url" name="image_url" placeholder="https://...">
-                                        <small class="text-muted">Opcional: Enlace a una imagen de tu receta</small>
-                                    </div>
+
+                                <div class="mb-3">
+                                    <label for="description" class="form-label">Descripción <span
+                                            class="text-danger">*</span></label>
+                                    <textarea class="form-control" id="description" name="description" rows="3"
+                                        required></textarea>
                                 </div>
                             </div>
-                            
-                            <div class="row mb-3">
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="cooking_time" class="form-label">Tiempo de cocción (minutos) <span class="text-danger">*</span></label>
-                                        <input type="number" class="form-control" id="cooking_time" name="cooking_time" min="1" step="1" required>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="image_url" class="form-label">URL de la imagen</label>
+                                    <input type="url" class="form-control" id="image_url" name="image_url"
+                                        placeholder="https://...">
+                                    <small class="text-muted">Opcional: Enlace a una imagen de tu receta</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="cooking_time" class="form-label">Tiempo de cocción (minutos) <span
+                                            class="text-danger">*</span></label>
+                                    <input type="number" class="form-control" id="cooking_time" name="cooking_time"
+                                        min="1" step="1" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="servings" class="form-label">Porciones <span
+                                            class="text-danger">*</span></label>
+                                    <input type="number" class="form-control" id="servings" name="servings" min="1"
+                                        step="1" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="difficulty_level" class="form-label">Nivel de dificultad <span
+                                            class="text-danger">*</span></label>
+                                    <select class="form-select" id="difficulty_level" name="difficulty_level" required>
+                                        <option value="1">1 - Muy fácil</option>
+                                        <option value="2">2 - Fácil</option>
+                                        <option value="3">3 - Intermedio</option>
+                                        <option value="4">4 - Difícil</option>
+                                        <option value="5">5 - Muy difícil</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Etiquetas</label>
+                            <div class="row">
+                                {% if tags %}
+                                {% for tag in tags %}
+                                <div class="col-md-3 mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="tag_{{ tag._id }}"
+                                            name="tag_ids" value="{{ tag._id }}">
+                                        <label class="form-check-label" for="tag_{{ tag._id }}">{{ tag.name }}</label>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="servings" class="form-label">Porciones <span class="text-danger">*</span></label>
-                                        <input type="number" class="form-control" id="servings" name="servings" min="1" step="1" required>
-                                    </div>
+                                {% endfor %}
+                                {% else %}
+                                <div class="col-12">
+                                    <p class="text-muted">No tienes etiquetas creadas. <a
+                                            href="{{ url_for('tags') }}">Crear etiquetas</a></p>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="difficulty_level" class="form-label">Nivel de dificultad <span class="text-danger">*</span></label>
-                                        <select class="form-select" id="difficulty_level" name="difficulty_level" required>
-                                            <option value="1">1 - Muy fácil</option>
-                                            <option value="2">2 - Fácil</option>
-                                            <option value="3">3 - Intermedio</option>
-                                            <option value="4">4 - Difícil</option>
-                                            <option value="5">5 - Muy difícil</option>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Ingredientes y Cantidades</label>
+                            <div id="ingredients-container">
+                                <div class="row mb-2 ingredient-entry" data-template="ingredient">
+                                    <div class="col-md-6">
+                                        <select class="form-select" name="ingredient_0" required>
+                                            <option value="">Selecciona un ingrediente</option>
+                                            {% for ingredient in ingredients %}
+                                            <option value="{{ ingredient._id }}">{{ ingredient.name }} ({{
+                                                ingredient.unit }})</option>
+                                            {% endfor %}
                                         </select>
                                     </div>
-                                </div>
-                            </div>
-                            
-                            <div class="mb-4">
-                                <label class="form-label">Etiquetas</label>
-                                <div class="row">
-                                    {% if tags %}
-                                        {% for tag in tags %}
-                                            <div class="col-md-3 mb-2">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" id="tag_{{ tag._id }}" name="tag_ids" value="{{ tag._id }}">
-                                                    <label class="form-check-label" for="tag_{{ tag._id }}">{{ tag.name }}</label>
-                                                </div>
-                                            </div>
-                                        {% endfor %}
-                                    {% else %}
-                                        <div class="col-12">
-                                            <p class="text-muted">No tienes etiquetas creadas. <a href="{{ url_for('tags') }}">Crear etiquetas</a></p>
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="form-label">Ingredientes y Cantidades</label>
-                                <div id="ingredients-container">
-                                    <div class="row mb-2 ingredient-entry">
-                                        <div class="col-md-6">
-                                            <select class="form-select" name="ingredient_0" required>
-                                                <option value="">Selecciona un ingrediente</option>
-                                                {% for ingredient in ingredients %}
-                                                    <option value="{{ ingredient._id }}">{{ ingredient.name }} ({{ ingredient.unit }})</option>
-                                                {% endfor %}
-                                            </select>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <input type="text" class="form-control" name="amount_0" placeholder="Cantidad (ej: 100)" required>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <button type="button" class="btn btn-outline-danger remove-ingredient">
-                                                <i class="bi bi-x"></i>
-                                            </button>
-                                        </div>
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control" name="amount_0"
+                                            placeholder="Cantidad (ej: 100)" required>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="button" class="btn btn-outline-danger remove-ingredient">
+                                            <i class="bi bi-x"></i>
+                                        </button>
                                     </div>
                                 </div>
-                                <button type="button" id="add-ingredient" class="btn btn-outline-secondary btn-sm mt-2">
-                                    <i class="bi bi-plus-circle"></i> Agregar ingrediente
-                                </button>
                             </div>
+                            <button type="button" id="add-ingredient" class="btn btn-outline-secondary btn-sm mt-2">
+                                <i class="bi bi-plus-circle"></i> Agregar ingrediente
+                            </button>
+                        </div>
 
-                            
-                            <div class="mb-4">
-                                <label class="form-label">Pasos de preparación <span class="text-danger">*</span></label>
-                                <div id="steps-container">
-                                    <div class="input-group mb-2">
-                                        <span class="input-group-text">1</span>
-                                        <input type="text" class="form-control" name="step_1" placeholder="Paso 1" required>
-                                    </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Pasos de preparación <span class="text-danger">*</span></label>
+                            <div id="steps-container">
+                                <div class="input-group mb-2" data-template="step">
+                                    <span class="input-group-text">1</span>
+                                    <input type="text" class="form-control" name="step_1" placeholder="Paso 1" required>
                                 </div>
-                                <button type="button" id="add-step" class="btn btn-outline-secondary btn-sm mt-2">
-                                    <i class="bi bi-plus-circle"></i> Agregar paso
-                                </button>
                             </div>
-                            
-                            <div class="text-end">
-                                <button type="submit" class="btn btn-primary">Guardar Receta</button>
-                            </div>
-                        </form>
-                    </div>
+                            <button type="button" id="add-step" class="btn btn-outline-secondary btn-sm mt-2">
+                                <i class="bi bi-plus-circle"></i> Agregar paso
+                            </button>
+                        </div>
+
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-primary">Guardar Receta</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            let ingredientIndex = 1;
-            const container = document.getElementById('ingredients-container');
-            const addIngredientBtn = document.getElementById('add-ingredient');
+</div>
 
-            addIngredientBtn.addEventListener('click', function () {
-                const row = document.createElement('div');
-                row.className = 'row mb-2 ingredient-entry';
-                row.innerHTML = `
-                    <div class="col-md-6">
-                        <select class="form-select" name="ingredient_${ingredientIndex}" required>
-                            <option value="">Selecciona un ingrediente</option>
-                            {% for ingredient in ingredients %}
-                                <option value="{{ ingredient._id }}">{{ ingredient.name }} ({{ ingredient.unit }})</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <input type="text" class="form-control" name="amount_${ingredientIndex}" placeholder="Cantidad (ej: 100)" required>
-                    </div>
-                    <div class="col-md-2">
-                        <button type="button" class="btn btn-outline-danger remove-ingredient">
-                            <i class="bi bi-x"></i>
-                        </button>
-                    </div>
-                `;
-                container.appendChild(row);
-                ingredientIndex++;
-            });
+<script src="{{ url_for('static', filename='js/script-create-recipe.js') }}"></script>
 
-            container.addEventListener('click', function (e) {
-                if (e.target.closest('.remove-ingredient')) {
-                    e.target.closest('.ingredient-entry').remove();
-                }
-            });
-        });
-    </script>
-
-</body>
-</html>
+{% endblock %}

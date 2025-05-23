@@ -11,10 +11,9 @@ app.config.from_object(Config)
 
 @app.route('/')
 def index():
-    # Si el usuario ya tiene una sesión activa, redireccionar al dashboard
+
     if 'user_id' in session:
         return redirect(url_for('dashboard'))
-    # Si no hay sesión activa, mostrar la landing page
     return render_template('landing.html')
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -51,7 +50,7 @@ def login():
             session['user_id'] = str(user._id)
             session['user_name'] = user.name
             
-            flash(f'Bienvenido, {user.name}!', 'success')
+            #flash(f'Bienvenido, {user.name}!', 'success')
             return redirect(url_for('dashboard'))
         else:
             flash('Correo o contraseña incorrectos', 'danger')
@@ -409,4 +408,5 @@ def delete_ingredient(ingredient_id):
 
 
 if __name__ == '__main__':
-    app.run(debug=Config.DEBUG)
+    #app.run(debug=Config.DEBUG)
+    app.run(debug=True)

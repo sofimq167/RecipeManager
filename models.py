@@ -4,7 +4,6 @@ from bson.objectid import ObjectId
 from datetime import datetime
 from config import Config
 
-# Conexión a MongoDB Atlas
 client = MongoClient(Config.MONGO_URI)
 db = client.ChefBoxDB
 bcrypt = Bcrypt()
@@ -19,12 +18,10 @@ class User:
         self._id = _id
     
     def save(self):
-        """Guardar usuario en la base de datos"""
         if not self._id:
-            # Hashear la contraseña
-            hashed_pw = bcrypt.generate_password_hash(self.password).decode('utf-8')
             
-            # Nuevo usuario
+            hashed_pw = bcrypt.generate_password_hash(self.password).decode('utf-8')
+    
             user_data = {
                 'email': self.email,
                 'password': hashed_pw,
