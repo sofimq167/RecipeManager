@@ -1,10 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
-from models import User, Recipe, Tag
+from models import User, Recipe, Tag, Ingredient, IngredientAmount
 from utils import login_required
 from config import Config
 from bson import ObjectId
 from datetime import datetime
-from models import Ingredient, IngredientAmount
 
 app = Flask(__name__)
 app.config.from_object(Config)
