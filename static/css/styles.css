@@ -16,6 +16,9 @@ body::-webkit-scrollbar {
     display: none;
 }
 
+.bg-primary-opacity-5 {
+    background-color: color-mix(in srgb, var(--primary-color) 10%, transparent);
+}
 /* Navbar Styles */
 .navbar {
     background-color: white;
