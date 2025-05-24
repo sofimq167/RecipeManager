@@ -161,8 +161,6 @@ def create_recipe():
             tag_ids=tag_ids
         )
         recipe.save()
-
-        # Después de guardar la receta, actualizamos los ingredient_amounts con su recipe_id
         for ia_id in ingredient_amount_ids:
             IngredientAmount.collection.update_one(
                 {'_id': ObjectId(ia_id)},
@@ -177,6 +175,19 @@ def create_recipe():
                            tags=user_tags,
                            ingredients=user_ingredients)
 
+def get_conversion_factor(unit, amount):
+    try:
+        amount = float(amount)
+    except:
+        return 1.0
+
+    if unit == 'g' or unit == 'ml':
+        return amount / 100.0
+    elif unit in ['taza', 'cdta', 'cda', 'unidad']:
+        return amount / 1.0
+    else:
+        return 1.0
+
 @app.route('/recipes/<recipe_id>')
 @login_required
 def view_recipe(recipe_id):
@@ -186,15 +197,11 @@ def view_recipe(recipe_id):
     if not recipe or str(recipe.user_id) != user_id:
         flash('Receta no encontrada', 'danger')
         return redirect(url_for('dashboard'))
-
-    # Obtener etiquetas asociadas
     recipe_tags = []
     for tag_id in recipe.tag_ids:
         tag = Tag.find_by_id(tag_id)
         if tag:
             recipe_tags.append(tag)
-
-    # Preparar detalles de ingredientes y calcular macros
     total_protein = 0.0
     total_carbs = 0.0
     total_fat = 0.0
@@ -205,10 +212,10 @@ def view_recipe(recipe_id):
         if ing_amt:
             ingredient = Ingredient.collection.find_one({'_id': ing_amt['ingredient_id']})
             if ingredient:
-                try:
-                    factor = float(ing_amt['amount']) / 100  # Estimación por 100g
-                except:
-                    factor = 1.0
+                unit = ingredient.get('unit', 'g')
+                amount = ing_amt.get('amount', 0)
+
+                factor = get_conversion_factor(unit, amount)
 
                 protein = ingredient.get('protein', 0.0) * factor
                 carbs = ingredient.get('carbs', 0.0) * factor
@@ -220,11 +227,11 @@ def view_recipe(recipe_id):
 
                 ingredient_details.append({
                     'name': ingredient['name'],
-                    'unit': ingredient['unit'],
-                    'amount': ing_amt['amount'],
-                    'protein': round(ingredient.get('protein', 0.0), 2),
-                    'carbs': round(ingredient.get('carbs', 0.0), 2),
-                    'fat': round(ingredient.get('fat', 0.0), 2),
+                    'unit': unit,
+                    'amount': amount,
+                    'protein': round(protein, 2),
+                    'carbs': round(carbs, 2),
+                    'fat': round(fat, 2),
                 })
 
     return render_template(
@@ -254,7 +261,6 @@ def edit_recipe(recipe_id):
     ingredient_amounts = IngredientAmount.find_by_recipe_id(recipe._id)
 
     if request.method == 'POST':
-        # Eliminar cantidades previas asociadas a la receta
         IngredientAmount.delete_by_recipe_id(recipe._id)
 
         title = request.form.get('title')

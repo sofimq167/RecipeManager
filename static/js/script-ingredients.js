@@ -1,4 +1,20 @@
 document.addEventListener('DOMContentLoaded', function () {
+    const unitSelect = document.getElementById('unit');
+    const referenceText = document.getElementById('unitReference');
+
+    const references = {
+        'g': 'Para gramos, la referencia nutricional es por cada 100 gramos.',
+        'ml': 'Para mililitros, la referencia nutricional es por cada 100 mililitros.',
+        'taza': 'Para tazas, la referencia nutricional es por 1 taza.',
+        'cdta': 'Para cucharaditas, la referencia nutricional es por 1 cucharadita.',
+        'cda': 'Para cucharadas, la referencia nutricional es por 1 cucharada.',
+        'unidad': 'Para unidades, la referencia nutricional es por 1 unidad.'
+    };
+
+    unitSelect.addEventListener('change', function () {
+        const selectedUnit = unitSelect.value;
+        referenceText.textContent = references[selectedUnit] || '';
+    });
 
     const editButtons = document.querySelectorAll('.edit-ingredient');
     editButtons.forEach(button => {
