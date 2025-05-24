@@ -78,7 +78,7 @@
                     <label class="form-label">Ingredientes y Cantidades</label>
                     <div id="ingredients-container">
                         {% for ia in ingredient_amounts %}
-                        <div class="row mb-2 ingredient-entry">
+                        <div class="row mb-2 ingredient-entry" {% if loop.first %}data-template="ingredient"{% endif %}>
                             <div class="col-md-6">
                                 <select class="form-select" name="ingredient_{{ loop.index0 }}" required>
                                     <option value="">Selecciona un ingrediente</option>
@@ -107,9 +107,12 @@
                     <label class="form-label">Pasos de preparación</label>
                     <div id="steps-container">
                         {% for step in recipe.steps %}
-                        <div class="input-group mb-2">
+                        <div class="input-group mb-2 step-entry" data-template="step">
                             <span class="input-group-text">{{ loop.index }}</span>
                             <input type="text" class="form-control" name="step_{{ loop.index }}" value="{{ step }}" required>
+                            <button type="button" class="btn btn-outline-danger remove-step">
+                                <i class="bi bi-x"></i>
+                            </button>
                         </div>
                         {% endfor %}
                     </div>

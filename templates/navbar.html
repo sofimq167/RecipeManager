@@ -160,7 +160,7 @@
 
             <a href="{{ url_for('login') }}" class="btn btn-outline-primary me-2">Iniciar Sesión</a>
 
-            {% elif request.path == url_for('dashboard') %}
+            {% elif request.path == url_for('dashboard') or request.path == url_for('tags') or request.path == url_for('ingredients') %}
 
             <span class="nav-link">Bienvenido, {{ user_name }}</span>
             <a class="nav-link" href="{{ url_for('logout') }}">Cerrar Sesión</a>
