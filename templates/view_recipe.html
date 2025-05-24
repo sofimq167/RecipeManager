@@ -28,10 +28,13 @@
                         <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">
                             <i class="bi bi-arrow-left"></i> Volver
                         </a>
-                        <a href="{{ url_for('edit_recipe', recipe_id=recipe._id) }}" class="btn btn-outline-primary ms-2">
+                        <a href="{{ url_for('edit_recipe', recipe_id=recipe._id) }}"
+                            class="btn btn-outline-primary ms-2">
                             <i class="bi bi-pencil-square"></i> Editar
                         </a>
-                        <a href="{{ url_for('delete_recipe', recipe_id=recipe._id) }}" class="btn btn-outline-danger ms-2" onclick="return confirm('¿Estás seguro de que deseas eliminar esta receta?')">
+                        <a href="{{ url_for('delete_recipe', recipe_id=recipe._id) }}"
+                            class="btn btn-outline-danger ms-2"
+                            onclick="return confirm('¿Estás seguro de que deseas eliminar esta receta?')">
                             <i class="bi bi-trash"></i> Eliminar
                         </a>
                     </div>
@@ -40,12 +43,12 @@
                     <div class="row">
                         <div class="col-md-4 mb-4">
                             {% if recipe.image_url %}
-                                <img src="{{ recipe.image_url }}" class="img-fluid rounded" alt="{{ recipe.title }}">
+                            <img src="{{ recipe.image_url }}" class="img-fluid rounded" alt="{{ recipe.title }}">
                             {% else %}
-                                <div class="bg-light text-center py-5 rounded">
-                                    <i class="bi bi-card-image text-muted" style="font-size: 5rem;"></i>
-                                    <p class="mt-3 text-muted">Sin imagen</p>
-                                </div>
+                            <div class="bg-light text-center py-5 rounded">
+                                <i class="bi bi-card-image text-muted" style="font-size: 5rem;"></i>
+                                <p class="mt-3 text-muted">Sin imagen</p>
+                            </div>
                             {% endif %}
                             <div class="mt-3">
                                 <div class="d-flex justify-content-between mb-2">
@@ -60,10 +63,10 @@
                                     <span><i class="bi bi-stars"></i> Dificultad:</span>
                                     <span class="fw-bold">
                                         {% for i in range(recipe.difficulty_level) %}
-                                            <i class="bi bi-star-fill text-warning"></i>
+                                        <i class="bi bi-star-fill text-warning"></i>
                                         {% endfor %}
                                         {% for i in range(5 - recipe.difficulty_level) %}
-                                            <i class="bi bi-star text-muted"></i>
+                                        <i class="bi bi-star text-muted"></i>
                                         {% endfor %}
                                     </span>
                                 </div>
@@ -74,14 +77,14 @@
                             </div>
 
                             {% if tags %}
-                                <div class="mt-4">
-                                    <h5>Etiquetas:</h5>
-                                    <div>
-                                        {% for tag in tags %}
-                                            <span class="badge bg-primary me-1 mb-1">{{ tag.name }}</span>
-                                        {% endfor %}
-                                    </div>
+                            <div class="mt-4">
+                                <h5>Etiquetas:</h5>
+                                <div>
+                                    {% for tag in tags %}
+                                    <span class="badge bg-primary me-1 mb-1">{{ tag.name }}</span>
+                                    {% endfor %}
                                 </div>
+                            </div>
                             {% endif %}
                         </div>
                         <div class="col-md-8">
@@ -91,31 +94,40 @@
                             <h4 class="mt-4">Ingredientes</h4>
                             <ul class="list-group mb-4">
                                 {% for item in ingredient_details %}
-                                    <li class="list-group-item">
-                                        {{ item.amount }} {{ item.unit }} de {{ item.name }}
-                                        <small class="text-muted">
-                                            (Prot: {{ item.protein }}g, Carb: {{ item.carbs }}g, Grasa: {{ item.fat }}g)
-                                        </small>
-                                    </li>
+                                <li class="list-group-item">
+                                    {{ item.amount }} {{ item.unit }} de {{ item.name }}
+                                    <small class="text-muted">
+                                        (Prot: {{ item.protein }}g, Carb: {{ item.carbs }}g, Grasa: {{ item.fat }}g)
+                                    </small>
+                                </li>
                                 {% endfor %}
                             </ul>
+                            <canvas id="macroChart" width="100" height="100" data-protein="{{ total_protein|round(2) }}"
+                                data-carbs="{{ total_carbs|round(2) }}" data-fat="{{ total_fat|round(2) }}">
+                            </canvas>
 
                             {% if total_protein is defined %}
                             <div class="mb-4">
                                 <h5>Total Nutricional Aproximado:</h5>
                                 <ul class="list-group">
-                                    <li class="list-group-item">Proteínas: <strong>{{ total_protein }}g</strong> ({{ (total_protein / recipe.servings)|round(2) }}g por porción)</li>
-                                    <li class="list-group-item">Carbohidratos: <strong>{{ total_carbs }}g</strong> ({{ (total_carbs / recipe.servings)|round(2) }}g por porción)</li>
-                                    <li class="list-group-item">Grasas: <strong>{{ total_fat }}g</strong> ({{ (total_fat / recipe.servings)|round(2) }}g por porción)</li>
+                                    <li class="list-group-item">Proteínas: <strong>{{ total_protein }}g</strong> ({{
+                                        (total_protein / recipe.servings)|round(2) }}g por porción)</li>
+                                    <li class="list-group-item">Carbohidratos: <strong>{{ total_carbs }}g</strong> ({{
+                                        (total_carbs / recipe.servings)|round(2) }}g por porción)</li>
+                                    <li class="list-group-item">Grasas: <strong>{{ total_fat }}g</strong> ({{ (total_fat
+                                        / recipe.servings)|round(2) }}g por porción)</li>
+                                    <li class="list-group-item">Calorias: <strong>{{ total_calories }}g</strong> ({{
+                                        (total_calories / recipe.servings)|round(2) }}kcal por porción)</li>
                                 </ul>
-                                <small class="text-muted">Cálculo estimado en base a los ingredientes y cantidades.</small>
+                                <small class="text-muted">Cálculo estimado en base a los ingredientes y
+                                    cantidades.</small>
                             </div>
                             {% endif %}
 
                             <h4 class="mt-4">Pasos de preparación</h4>
                             <ol class="list-group list-group-numbered">
                                 {% for step in recipe.steps %}
-                                    <li class="list-group-item">{{ step }}</li>
+                                <li class="list-group-item">{{ step }}</li>
                                 {% endfor %}
                             </ol>
                         </div>
@@ -126,5 +138,6 @@
     </div>
 </div>
 
+<script src="{{ url_for('static', filename='js/script_view_recipe.js') }}"></script>
 
 {% endblock %}

@@ -205,6 +205,7 @@ def view_recipe(recipe_id):
     total_protein = 0.0
     total_carbs = 0.0
     total_fat = 0.0
+    total_calories = 0.0
     ingredient_details = []
 
     for ia_id in recipe.ingredient_amount_ids:
@@ -220,10 +221,12 @@ def view_recipe(recipe_id):
                 protein = ingredient.get('protein', 0.0) * factor
                 carbs = ingredient.get('carbs', 0.0) * factor
                 fat = ingredient.get('fat', 0.0) * factor
+                calories = (protein * 4) + (carbs * 4) + (fat * 9)
 
                 total_protein += protein
                 total_carbs += carbs
                 total_fat += fat
+                total_calories += calories
 
                 ingredient_details.append({
                     'name': ingredient['name'],
@@ -232,6 +235,7 @@ def view_recipe(recipe_id):
                     'protein': round(protein, 2),
                     'carbs': round(carbs, 2),
                     'fat': round(fat, 2),
+                    'calories': round(calories, 2)
                 })
 
     return render_template(
@@ -242,6 +246,7 @@ def view_recipe(recipe_id):
         total_protein=round(total_protein, 2),
         total_carbs=round(total_carbs, 2),
         total_fat=round(total_fat, 2),
+        total_calories=round(total_calories, 2),
         ingredient_details=ingredient_details
     )
 
