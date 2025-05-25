@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}{{ meal_prep.name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2><i class="fas fa-calendar-week text-primary"></i> {{ meal_prep.name }}</h2>
+                    <p class="text-muted mb-0">
+                        <small>
+                            <i class="fas fa-calendar"></i> 
+                            Creado: {{ meal_prep.created_at.strftime('%d/%m/%Y') if meal_prep.created_at else 'N/A' }}
+                        </small>
+                    </p>
+                </div>
+                <a href="{{ url_for('meal_prep_list') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Volver
+                </a>
+            </div>
+
+            <!-- Day Navigator -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <button class="btn btn-outline-primary" id="prevDay">
+                            <i class="fas fa-chevron-left"></i> Anterior
+                        </button>
+                        
+                        <div class="text-center">
+                            <h4 class="mb-0" id="currentDayTitle">Lunes</h4>
+                            <small class="text-muted">Día <span id="dayCounter">1</span> de 7</small>
+                        </div>
+                        
+                        <button class="btn btn-outline-primary" id="nextDay">
+                            Siguiente <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day Content -->
+            <div id="dayContent">
+                {% set day_names = {
+                    'lunes': 'Lunes', 
+                    'martes': 'Martes', 
+                    'miercoles': 'Miércoles',
+                    'jueves': 'Jueves', 
+                    'viernes': 'Viernes', 
+                    'sabado': 'Sábado', 
+                    'domingo': 'Domingo'
+                } %}
+                
+                {% set moment_names = {
+                    'desayuno': {'name': 'Desayuno', 'icon': 'fa-sun', 'color': 'success'},
+                    'snack1': {'name': 'Media Mañana', 'icon': 'fa-cookie', 'color': 'info'},
+                    'almuerzo': {'name': 'Almuerzo', 'icon': 'fa-utensils', 'color': 'warning'},
+                    'snack2': {'name': 'Tarde', 'icon': 'fa-cookie', 'color': 'info'},
+                    'cena': {'name': 'Cena', 'icon': 'fa-moon', 'color': 'danger'},
+                    'snack3': {'name': 'Noche', 'icon': 'fa-cookie', 'color': 'info'}
+                } %}
+
+                {% for day in days %}
+                <div class="day-plan {% if loop.index0 != 0 %}d-none{% endif %}" data-day="{{ day }}">
+                    <div class="row g-4">
+                        {% for moment in ['desayuno', 'snack1', 'almuerzo', 'snack2', 'cena', 'snack3'] %}
+                        {% if meal_plan[day][moment] %}
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card h-100 border-{{ moment_names[moment]['color'] }}">
+                                <div class="card-header bg-{{ moment_names[moment]['color'] }} text-white">
+                                    <h6 class="mb-0">
+                                        <i class="fas {{ moment_names[moment]['icon'] }}"></i> 
+                                        {{ moment_names[moment]['name'] }}
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    {% for item in meal_plan[day][moment] %}
+                                    <div class="mb-3 {% if not loop.last %}border-bottom pb-3{% endif %}">
+                                        <h6 class="card-title mb-2">{{ item.recipe.title }}</h6>
+                                        <p class="card-text text-muted small mb-2">
+                                            {{ item.recipe.description[:80] }}{% if item.recipe.description|length > 80 %}...{% endif %}
+                                        </p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="small text-muted">
+                                                <i class="fas fa-clock"></i> {{ item.recipe.cooking_time }}min
+                                                <span class="ms-2">
+                                                    <i class="fas fa-users"></i> {{ item.recipe.servings }}
+                                                </span>
+                                            </div>
+                                            <a href="{{ url_for('view_recipe', recipe_id=item.recipe_id) }}" 
+                                               class="btn btn-outline-primary btn-sm">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                    
+                    <!-- Empty state for days without meals -->
+                    {% set has_meals = false %}
+                    {% for moment in ['desayuno', 'snack1', 'almuerzo', 'snack2', 'cena', 'snack3'] %}
+                        {% if meal_plan[day][moment] %}
+                            {% set has_meals = true %}
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if has_meals %}
+                    <div class="text-center py-5">
+                        <div class="mb-3">
+                            <i class="fas fa-utensils fa-3x text-muted"></i>
+                        </div>
+                        <h5 class="text-muted">No hay comidas planificadas para {{ day_names[day] }}</h5>
+                        <p class="text-muted">Este día está libre en tu meal prep</p>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/script_meal_prep_view.js') }}"></script>
+{% endblock %}

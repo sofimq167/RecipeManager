@@ -417,6 +417,112 @@ def delete_ingredient(ingredient_id):
     return redirect(url_for('ingredients'))
 
 
+from models import RecetaMealPrep, MealPrep  # Asegúrate de importar
+
+@app.route('/meal-prep/create', methods=['GET', 'POST'])
+@login_required
+def create_meal_prep():
+    user_id = session.get('user_id')
+    user_recipes = Recipe.find_by_user_id(user_id)
+    
+    if request.method == 'POST':
+        name = request.form.get('name')
+        
+        if not name:
+            flash('El nombre del meal prep es obligatorio', 'danger')
+            return render_template('create_meal_prep.html',
+                                   user_name=session.get('user_name'),
+                                   recipes=user_recipes)
+        
+        # Crear el meal prep
+        meal_prep = MealPrep(user_id=user_id, name=name)
+        meal_prep.save()
+        
+        # Obtener todas las asignaciones del formulario
+        receta_meal_prep_ids = []
+        days = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo']
+        
+        for day in days:
+            # Verificar cada tipo de comida para este día
+            moments = ['desayuno', 'snack1', 'snack2', 'snack3', 'almuerzo', 'cena']
+            
+            for moment in moments:
+                # Obtener múltiples recetas para este momento (array)
+                recipe_ids = request.form.getlist(f'{day}_{moment}[]')
+                for recipe_id in recipe_ids:
+                    if recipe_id:  # Si se seleccionó una receta para este momento
+                        receta_meal_prep = RecetaMealPrep(
+                            recipe_id=recipe_id,
+                            day=day,
+                            moment=moment,
+                            meal_prep_id=meal_prep._id
+                        )
+                        receta_meal_prep.save()
+                        receta_meal_prep_ids.append(str(receta_meal_prep._id))
+        
+        # Actualizar el meal prep con los IDs de RecetaMealPrep
+        meal_prep.receta_meal_prep_ids = receta_meal_prep_ids
+        meal_prep.save()
+        
+        flash('¡Meal Prep creado exitosamente!', 'success')
+        return redirect(url_for('dashboard'))
+    
+    return render_template('create_meal_prep.html',
+                           user_name=session.get('user_name'),
+                           recipes=user_recipes)
+
+
+@app.route('/meal-prep')
+@login_required
+def meal_prep_list():
+    user_id = session.get('user_id')
+    meal_preps = MealPrep.find_by_user_id(user_id)
+    
+    return render_template('meal_prep_list.html',
+                           user_name=session.get('user_name'),
+                           meal_preps=meal_preps)
+
+@app.route('/meal-prep/<meal_prep_id>')
+@login_required
+def view_meal_prep(meal_prep_id):
+    user_id = session.get('user_id')
+    meal_prep = MealPrep.find_by_id(meal_prep_id)
+    
+    if not meal_prep or str(meal_prep.user_id) != user_id:
+        flash('Meal Prep no encontrado', 'danger')
+        return redirect(url_for('meal_prep_list'))
+    
+    # Obtener todas las RecetaMealPrep asociadas
+    receta_meal_preps = RecetaMealPrep.find_by_meal_prep_id(meal_prep._id)
+    
+    # Organizar por día y momento
+    days = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo']
+    moments = ['desayuno', 'snack1', 'almuerzo', 'snack2', 'cena', 'snack3']
+    
+    meal_plan = {}
+    for day in days:
+        meal_plan[day] = {}
+        for moment in moments:
+            meal_plan[day][moment] = []
+    
+    # Llenar el plan con las recetas
+    for rmp in receta_meal_preps:
+        recipe = Recipe.find_by_id(rmp.recipe_id)
+        if recipe:
+            meal_plan[rmp.day][rmp.moment].append({
+                'recipe': recipe,
+                'recipe_id': str(recipe._id)
+            })
+    
+    return render_template('view_meal_prep.html',
+                           user_name=session.get('user_name'),
+                           meal_prep=meal_prep,
+                           meal_plan=meal_plan,
+                           days=days)
+
+
+
+
 if __name__ == '__main__':
     #app.run(debug=Config.DEBUG)
     app.run(debug=True)

@@ -10,6 +10,42 @@ document.addEventListener('DOMContentLoaded', function() {
     const globalSnackCount = document.getElementById('globalSnackCount');
     const applyGlobalBtn = document.getElementById('applyGlobalConfig');
     
+    // Función para agregar una nueva receta a un momento específico
+    function addRecipeToMoment(day, moment) {
+        const container = document.querySelector(`.${moment}-container[data-day="${day}"] .recipes-list`);
+        const recipeCount = container.children.length;
+        
+        const recipeDiv = document.createElement('div');
+        recipeDiv.className = 'recipe-item mb-2';
+        recipeDiv.innerHTML = `
+            <div class="input-group input-group-sm">
+                <select class="form-select" name="${day}_${moment}[]">
+                    <option value="">-- Seleccionar --</option>
+                    ${getRecipeOptions()}
+                </select>
+                <button type="button" class="btn btn-outline-danger btn-sm remove-recipe">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        `;
+        
+        container.appendChild(recipeDiv);
+        
+        // Agregar evento para eliminar receta
+        recipeDiv.querySelector('.remove-recipe').addEventListener('click', function() {
+            recipeDiv.remove();
+        });
+    }
+    
+    // Función para obtener las opciones de recetas (necesitas pasarlas desde el template)
+    function getRecipeOptions() {
+        const firstSelect = document.querySelector('select[name$="_desayuno[]"]');
+        if (firstSelect) {
+            return firstSelect.innerHTML;
+        }
+        return '';
+    }
+    
     // Función para mostrar/ocultar contenedores de comidas por día
     function toggleMealContainer(day, mealType, show) {
         const container = document.querySelector(`.${mealType}-container[data-day="${day}"]`);
@@ -18,9 +54,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 container.classList.remove('d-none');
             } else {
                 container.classList.add('d-none');
-                // Limpiar selección cuando se oculta
-                const select = container.querySelector('select');
-                if (select) select.value = '';
+                // Limpiar selecciones cuando se oculta
+                const selects = container.querySelectorAll('select');
+                selects.forEach(select => select.value = '');
             }
         }
     }
@@ -67,6 +103,25 @@ document.addEventListener('DOMContentLoaded', function() {
                 updateDaySnacks(day);
             });
         }
+        
+        // Configurar botones "Agregar receta"
+        const moments = ['desayuno', 'snack1', 'snack2', 'snack3', 'almuerzo', 'cena'];
+        moments.forEach(moment => {
+            const addBtn = document.querySelector(`[data-day="${day}"][data-moment="${moment}"]`);
+            if (addBtn) {
+                addBtn.addEventListener('click', function() {
+                    addRecipeToMoment(day, moment);
+                });
+            }
+        });
+        
+        // Configurar eventos de eliminación de recetas existentes
+        const removeButtons = document.querySelectorAll(`[data-day="${day}"] .remove-recipe`);
+        removeButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                btn.closest('.recipe-item').remove();
+            });
+        });
         
         // Inicializar estado del día
         updateDaySnacks(day);
@@ -137,7 +192,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Verificar que al menos se haya seleccionado una receta
-        const allSelects = form.querySelectorAll('select[name$="_desayuno"], select[name$="_snack1"], select[name$="_snack2"], select[name$="_snack3"], select[name$="_almuerzo"], select[name$="_cena"]');
+        const allSelects = form.querySelectorAll('select[name$="[]"]');
         let hasSelection = false;
         
         allSelects.forEach(select => {
@@ -163,74 +218,3 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
-
-// Función para copiar configuración de un día específico a otros días
-function copyDayConfig(sourceDay) {
-    const days = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'];
-    const targetDays = days.filter(day => day !== sourceDay);
-    
-    if (confirm(`¿Copiar la configuración de ${sourceDay.charAt(0).toUpperCase() + sourceDay.slice(1)} a los demás días?`)) {
-        // Obtener configuración del día origen
-        const sourceDesayuno = document.getElementById(`${sourceDay}_includeDesayuno`).checked;
-        const sourceAlmuerzo = document.getElementById(`${sourceDay}_includeAlmuerzo`).checked;
-        const sourceCena = document.getElementById(`${sourceDay}_includeCena`).checked;
-        const sourceSnacks = document.getElementById(`${sourceDay}_snackCount`).value;
-        
-        // Obtener selecciones de recetas
-        const sourceSelections = {};
-        ['desayuno', 'snack1', 'snack2', 'snack3', 'almuerzo', 'cena'].forEach(meal => {
-            const select = document.querySelector(`select[name="${sourceDay}_${meal}"]`);
-            if (select) {
-                sourceSelections[meal] = select.value;
-            }
-        });
-        
-        // Aplicar a días destino
-        targetDays.forEach(day => {
-            // Configuración de checkboxes y snacks
-            document.getElementById(`${day}_includeDesayuno`).checked = sourceDesayuno;
-            document.getElementById(`${day}_includeAlmuerzo`).checked = sourceAlmuerzo;
-            document.getElementById(`${day}_includeCena`).checked = sourceCena;
-            document.getElementById(`${day}_snackCount`).value = sourceSnacks;
-            
-            // Aplicar cambios visuales
-            toggleMealContainer(day, 'desayuno', sourceDesayuno);
-            toggleMealContainer(day, 'almuerzo', sourceAlmuerzo);
-            toggleMealContainer(day, 'cena', sourceCena);
-            updateDaySnacks(day);
-            
-            // Copiar selecciones de recetas
-            Object.keys(sourceSelections).forEach(meal => {
-                const targetSelect = document.querySelector(`select[name="${day}_${meal}"]`);
-                if (targetSelect && sourceSelections[meal]) {
-                    targetSelect.value = sourceSelections[meal];
-                }
-            });
-        });
-    }
-}
-
-// Función auxiliar para toggle de contenedores (para uso externo)
-function toggleMealContainer(day, mealType, show) {
-    const container = document.querySelector(`.${mealType}-container[data-day="${day}"]`);
-    if (container) {
-        if (show) {
-            container.classList.remove('d-none');
-        } else {
-            container.classList.add('d-none');
-            const select = container.querySelector('select');
-            if (select) select.value = '';
-        }
-    }
-}
-
-// Función auxiliar para actualizar snacks (para uso externo)
-function updateDaySnacks(day) {
-    const snackSelect = document.getElementById(`${day}_snackCount`);
-    if (snackSelect) {
-        const count = parseInt(snackSelect.value);
-        toggleMealContainer(day, 'snack1', count >= 1);
-        toggleMealContainer(day, 'snack2', count >= 2);
-        toggleMealContainer(day, 'snack3', count >= 3);
-    }
-}

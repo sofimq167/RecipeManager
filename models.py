@@ -382,3 +382,137 @@ class Recipe:
                 _id=recipe_data['_id']
             )
         return None
+    
+class RecetaMealPrep:
+    collection = db.receta_meal_prep
+    
+    def __init__(self, recipe_id, day, moment, meal_prep_id=None, _id=None):
+        self.recipe_id = recipe_id
+        self.day = day  # lunes, martes, miercoles, jueves, viernes, sabado, domingo
+        self.moment = moment  # desayuno, snack1, snack2, snack3, almuerzo, cena
+        self.meal_prep_id = meal_prep_id
+        self._id = _id
+    
+    def save(self):
+        """Guardar RecetaMealPrep en la base de datos"""
+        if not self._id:
+            # Nueva RecetaMealPrep
+            data = {
+                'recipe_id': ObjectId(self.recipe_id),
+                'day': self.day,
+                'moment': self.moment,
+                'created_at': datetime.utcnow()
+            }
+            
+            if self.meal_prep_id:
+                data['meal_prep_id'] = ObjectId(self.meal_prep_id)
+                
+            result = self.collection.insert_one(data)
+            self._id = result.inserted_id
+            return self._id
+        else:
+            # Actualizar RecetaMealPrep existente
+            update_data = {
+                'recipe_id': ObjectId(self.recipe_id),
+                'day': self.day,
+                'moment': self.moment,
+                'updated_at': datetime.utcnow()
+            }
+            
+            if self.meal_prep_id:
+                update_data['meal_prep_id'] = ObjectId(self.meal_prep_id)
+                
+            self.collection.update_one(
+                {'_id': self._id},
+                {'$set': update_data}
+            )
+            return self._id
+    
+    @classmethod
+    def find_by_meal_prep_id(cls, meal_prep_id):
+        """Encontrar todas las RecetaMealPrep de un meal prep"""
+        cursor = cls.collection.find({'meal_prep_id': ObjectId(meal_prep_id)})
+        receta_meal_preps = []
+        for data in cursor:
+            receta_meal_preps.append(cls(
+                recipe_id=data['recipe_id'],
+                day=data['day'],
+                moment=data['moment'],
+                meal_prep_id=data.get('meal_prep_id'),
+                _id=data['_id']
+            ))
+        return receta_meal_preps
+    
+    @classmethod
+    def delete_by_meal_prep_id(cls, meal_prep_id):
+        """Eliminar todas las RecetaMealPrep de un meal prep"""
+        cls.collection.delete_many({'meal_prep_id': ObjectId(meal_prep_id)})
+
+
+class MealPrep:
+    collection = db.meal_preps
+    
+    def __init__(self, user_id, name, receta_meal_prep_ids=None, created_at=None, _id=None):
+        self.user_id = user_id
+        self.name = name
+        self.receta_meal_prep_ids = receta_meal_prep_ids or []
+        self.created_at = created_at or datetime.utcnow()
+        self._id = _id
+    
+    def save(self):
+        """Guardar MealPrep en la base de datos"""
+        # Convertir los IDs a ObjectId si son string
+        receta_meal_prep_ids_obj = [ObjectId(rmp_id) if isinstance(rmp_id, str) else rmp_id for rmp_id in self.receta_meal_prep_ids]
+        
+        if not self._id:
+            # Nuevo MealPrep
+            data = {
+                'user_id': ObjectId(self.user_id),
+                'name': self.name,
+                'receta_meal_prep_ids': receta_meal_prep_ids_obj,
+                'created_at': self.created_at
+            }
+            
+            result = self.collection.insert_one(data)
+            self._id = result.inserted_id
+            return self._id
+        else:
+            # Actualizar MealPrep existente
+            self.collection.update_one(
+                {'_id': self._id},
+                {'$set': {
+                    'name': self.name,
+                    'receta_meal_prep_ids': receta_meal_prep_ids_obj,
+                    'updated_at': datetime.utcnow()
+                }}
+            )
+            return self._id
+    
+    @classmethod
+    def find_by_user_id(cls, user_id):
+        """Encontrar todos los MealPrep de un usuario"""
+        cursor = cls.collection.find({'user_id': ObjectId(user_id)})
+        meal_preps = []
+        for data in cursor:
+            meal_preps.append(cls(
+                user_id=data['user_id'],
+                name=data['name'],
+                receta_meal_prep_ids=data.get('receta_meal_prep_ids', []),
+                created_at=data.get('created_at'),
+                _id=data['_id']
+            ))
+        return meal_preps
+    
+    @classmethod
+    def find_by_id(cls, meal_prep_id):
+        """Buscar MealPrep por ID"""
+        data = cls.collection.find_one({'_id': ObjectId(meal_prep_id)})
+        if data:
+            return cls(
+                user_id=data['user_id'],
+                name=data['name'],
+                receta_meal_prep_ids=data.get('receta_meal_prep_ids', []),
+                created_at=data.get('created_at'),
+                _id=data['_id']
+            )
+        return None
