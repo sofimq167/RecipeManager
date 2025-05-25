@@ -89,6 +89,7 @@ body::-webkit-scrollbar {
 }
 
 .btn-outline-primary:hover {
+    border-color: var(--primary-color)!important;
     background-color: var(--primary-color);
     color: white;
     transform: translateY(-3px);
@@ -322,4 +323,30 @@ footer {
     .about-image {
         margin-top: 40px;
     }
+}
+
+.icon-color{
+    color:var(--primary-color)!important;
+}
+
+.icon-color-secundary{
+    background-color:var(--secondary-color)!important;
+}
+
+.bg-breakfast{
+    background-color: var(--primary-color);
+}
+.bg-lunch{
+    background-color: var(--secondary-color);
+}
+.bg-dinner{
+    background-color: var(--dark-color);
+}
+
+.bg-plan{
+    background-color: var(--accent-color);
+}
+
+.bg-snack{
+    background-color: #ac763d;
 }

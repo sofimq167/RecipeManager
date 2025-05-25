@@ -4,38 +4,6 @@
 
 {% block content %}
 
-<!--
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container">
-        <a class="navbar-brand" href="{{ url_for('dashboard') }}">ChefBox</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item">
-                    <a class="nav-link active" href="{{ url_for('dashboard') }}">Mis Recetas</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('tags') }}">Mis Etiquetas</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" href="{{ url_for('ingredients') }}">Mis Ingredientes</a>
-                </li>
-
-            </ul>
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <span class="nav-link">Bienvenido, {{ user_name }}</span>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('logout') }}">Cerrar Sesión</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>-->
-
 <div class="container mt-3">
     <div class="row mb-4">
         <div class="col-12">
@@ -92,17 +60,19 @@
                     <small class="text-muted">
                         Creada: {{ recipe.created_at|format_date if recipe.created_at else 'Fecha no disponible' }}
                     </small>
-                    <div>
+                    <div class="d-flex w-100 justify-content-end">
                         <a href="{{ url_for('view_recipe', recipe_id=recipe._id) }}"
-                            class="btn btn-sm btn-outline-primary">Ver</a>
+                            class="btn btn-sm btn-outline-primary me-1">
+                            <i class="fas fa-eye"></i>
+                        </a>
                         <a href="{{ url_for('delete_recipe', recipe_id=recipe._id) }}"
-                            class="btn btn-sm btn-outline-danger ms-1"
+                            class="btn btn-sm btn-outline-primary me-1"
                             onclick="return confirm('¿Estás seguro de que deseas eliminar esta receta?')">
-                            <i class="bi bi-trash"></i>
+                            <i class="fas fa-trash"></i>
                         </a>
                         <a href="{{ url_for('edit_recipe', recipe_id=recipe._id) }}"
-                            class="btn btn-sm btn-outline-secondary me-1">
-                            <i class="bi bi-pencil-square"></i> Editar
+                            class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-edit"></i>
                         </a>
 
                     </div>

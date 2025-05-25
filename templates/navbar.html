@@ -213,6 +213,7 @@
             {% elif request.path == url_for('dashboard') or
             request.path == url_for('tags') or
             request.path == url_for('ingredients') or
+            request.path.startswith('/recipes') or
             request.path.startswith('/meal-prep') %}
 
             <span class="nav-link">Bienvenido, {{ user_name }}</span>

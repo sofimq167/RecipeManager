@@ -7,70 +7,69 @@
     <div class="row">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2><i class="fas fa-calendar-week text-primary"></i> Mis Meal Preps</h2>
+                <h2><i class="fas fa-calendar-week text-primary icon-color"></i> Mis Meal Preps</h2>
                 <a href="{{ url_for('create_meal_prep') }}" class="btn btn-primary">
                     <i class="fas fa-plus"></i> Crear Nuevo Meal Prep
                 </a>
             </div>
 
             {% if meal_preps %}
-                <div class="row">
-                    {% for meal_prep in meal_preps %}
-                    <div class="col-md-6 col-lg-4 mb-4">
-                        <div class="card h-100 shadow-sm">
-                            <div class="card-body">
-                                <h5 class="card-title text-primary">
-                                    <i class="fas fa-utensils"></i> {{ meal_prep.name }}
-                                </h5>
-                                <p class="card-text text-muted">
-                                    <small>
-                                        <i class="fas fa-calendar"></i> 
-                                        Creado: {{ meal_prep.created_at.strftime('%d/%m/%Y') if meal_prep.created_at else 'N/A' }}
-                                    </small>
-                                </p>
-                                <p class="card-text">
-                                    <span class="badge bg-info">
-                                        {{ meal_prep.receta_meal_prep_ids|length }} comidas planificadas
-                                    </span>
-                                </p>
-                            </div>
-                            <div class="card-footer bg-transparent">
-                                <div class="d-flex justify-content-between">
-                                    <a href="{{ url_for('view_meal_prep', meal_prep_id=meal_prep._id) }}" 
-                                       class="btn btn-outline-primary btn-sm">
-                                        <i class="fas fa-eye"></i> Ver Plan
-                                    </a>
-                                    <div class="btn-group" role="group">
-                                        <a type="button" class="btn btn-outline-secondary btn-sm" href="{{ url_for('edit_meal_prep', meal_prep_id=meal_prep._id) }}" >
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <button type="button" 
-                                                class="btn btn-outline-danger btn-sm btn-delete-meal-prep"
-                                                data-meal-prep-id="{{ meal_prep._id }}"
-                                                data-meal-prep-name="{{ meal_prep.name }}">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </div>
+            <div class="row">
+                {% for meal_prep in meal_preps %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary icon-color">
+                                <i class="fas fa-utensils"></i> {{ meal_prep.name }}
+                            </h5>
+                            <p class="card-text text-muted">
+                                <small>
+                                    <i class="fas fa-calendar"></i>
+                                    Creado: {{ meal_prep.created_at.strftime('%d/%m/%Y') if meal_prep.created_at else
+                                    'N/A' }}
+                                </small>
+                            </p>
+                            <p class="card-text">
+                                <span class="badge icon-color-secundary">
+                                    {{ meal_prep.receta_meal_prep_ids|length }} comidas planificadas
+                                </span>
+                            </p>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <div class="d-flex w-100 justify-content-end">
+                                <a href="{{ url_for('view_meal_prep', meal_prep_id=meal_prep._id) }}"
+                                    class="btn btn-sm btn-outline-primary me-1">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a type="button" class="btn btn-sm btn-outline-primary me-1"
+                                    href="{{ url_for('edit_meal_prep', meal_prep_id=meal_prep._id) }}">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-outline-primary me-1"
+                                    data-meal-prep-id="{{ meal_prep._id }}" data-meal-prep-name="{{ meal_prep.name }}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
-                    {% endfor %}
                 </div>
+                {% endfor %}
+            </div>
             {% else %}
-                <div class="text-center py-5">
-                    <div class="mb-4">
-                        <i class="fas fa-calendar-week fa-5x text-muted"></i>
-                    </div>
-                    <h4 class="text-muted">No tienes meal preps creados</h4>
-                    <p class="text-muted">¡Crea tu primer meal prep para organizar tus comidas de la semana!</p>
-                    <a href="{{ url_for('create_meal_prep') }}" class="btn btn-primary btn-lg">
-                        <i class="fas fa-plus"></i> Crear Mi Primer Meal Prep
-                    </a>
+            <div class="text-center py-5">
+                <div class="mb-4">
+                    <i class="fas fa-calendar-week fa-5x text-muted"></i>
                 </div>
+                <h4 class="text-muted">No tienes meal preps creados</h4>
+                <p class="text-muted">¡Crea tu primer meal prep para organizar tus comidas de la semana!</p>
+                <a href="{{ url_for('create_meal_prep') }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-plus"></i> Crear Mi Primer Meal Prep
+                </a>
+            </div>
             {% endif %}
         </div>
     </div>
 </div>
 <script src="{{ url_for('static', filename='js/script_meal_prep_delete.js') }}"></script>
+
 {% endblock %}

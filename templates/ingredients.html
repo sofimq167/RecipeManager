@@ -70,12 +70,12 @@
                             data-protein="{{ ingredient.protein }}" data-carbs="{{ ingredient.carbs }}"
                             data-fat="{{ ingredient.fat }}" data-bs-toggle="modal"
                             data-bs-target="#editIngredientModal">
-                            <i class="bi bi-pencil"></i>
+                            <i class="fas fa-edit"></i>
                         </button>
                         <a href="{{ url_for('delete_ingredient', ingredient_id=ingredient._id) }}"
                             class="btn btn-sm btn-outline-danger"
                             onclick="return confirm('¿Estás seguro de que deseas eliminar este ingrediente? Esto podría afectar a las recetas que lo utilizan.')">
-                            <i class="bi bi-trash"></i>
+                            <i class="fas fa-trash"></i>
                         </a>
                     </td>
                 </tr>
