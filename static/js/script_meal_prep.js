@@ -1,16 +1,12 @@
-// static/js/script_meal_prep.js
-
 document.addEventListener('DOMContentLoaded', function() {
     const days = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'];
     
-    // Configuración global
     const globalDesayuno = document.getElementById('globalDesayuno');
     const globalAlmuerzo = document.getElementById('globalAlmuerzo');
     const globalCena = document.getElementById('globalCena');
     const globalSnackCount = document.getElementById('globalSnackCount');
     const applyGlobalBtn = document.getElementById('applyGlobalConfig');
     
-    // Función para agregar una nueva receta a un momento específico
     function addRecipeToMoment(day, moment) {
         const container = document.querySelector(`.${moment}-container[data-day="${day}"] .recipes-list`);
         const recipeCount = container.children.length;
@@ -37,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Función para obtener las opciones de recetas (necesitas pasarlas desde el template)
+    // Función para obtener las opciones de recetas
     function getRecipeOptions() {
         const firstSelect = document.querySelector('select[name$="_desayuno[]"]');
         if (firstSelect) {

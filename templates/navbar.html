@@ -55,6 +55,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('ingredients') }}">Mis Ingredientes</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('meal_prep_list') }}">Meal Prep</a>
+                </li>
             </ul>
 
             {% elif request.path == url_for('create_recipe') %}
@@ -68,6 +71,9 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('ingredients') }}">Mis Ingredientes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('meal_prep_list') }}">Meal Prep</a>
                 </li>
             </ul>
 
@@ -83,6 +89,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('ingredients') }}">Mis Ingredientes</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('meal_prep_list') }}">Meal Prep</a>
+                </li>
             </ul>
 
             {% elif request.path.startswith('/recipes/') %}
@@ -96,6 +105,9 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('ingredients') }}">Mis Ingredientes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('meal_prep_list') }}">Meal Prep</a>
                 </li>
             </ul>
 
@@ -111,6 +123,9 @@
                 <li class="nav-item">
                     <a class="nav-link active" href="{{ url_for('ingredients') }}">Mis Ingredientes</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('meal_prep_list') }}">Meal Prep</a>
+                </li>
             </ul>
 
             {% elif request.path == url_for('tags') %}
@@ -124,6 +139,43 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('ingredients') }}">Mis Ingredientes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('meal_prep_list') }}">Meal Prep</a>
+                </li>
+            </ul>
+
+            {% elif request.path == url_for('meal_prep_list') %}
+
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('dashboard') }}">Mis Recetas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('tags') }}">Mis Etiquetas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('ingredients') }}">Mis Ingredientes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="{{ url_for('meal_prep_list') }}">Meal Prep</a>
+                </li>
+            </ul>
+
+            {% elif request.path.startswith('/meal-prep/') %}
+
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('dashboard') }}">Mis Recetas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('tags') }}">Mis Etiquetas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('ingredients') }}">Mis Ingredientes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="{{ url_for('meal_prep_list') }}">Meal Prep</a>
                 </li>
             </ul>
 
@@ -146,8 +198,6 @@
 
             {% endif %}
 
-
-
         </div>
 
         <div class="ms-3 col-md-4 d-flex justify-content-end">
@@ -160,7 +210,10 @@
 
             <a href="{{ url_for('login') }}" class="btn btn-outline-primary me-2">Iniciar Sesión</a>
 
-            {% elif request.path == url_for('dashboard') or request.path == url_for('tags') or request.path == url_for('ingredients') %}
+            {% elif request.path == url_for('dashboard') or
+            request.path == url_for('tags') or
+            request.path == url_for('ingredients') or
+            request.path.startswith('/meal-prep') %}
 
             <span class="nav-link">Bienvenido, {{ user_name }}</span>
             <a class="nav-link" href="{{ url_for('logout') }}">Cerrar Sesión</a>

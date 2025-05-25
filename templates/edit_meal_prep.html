@@ -1,0 +1,407 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Meal Prep{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0"><i class="fas fa-edit"></i> Editar Meal Prep: {{ meal_prep.name }}</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" id="editMealPrepForm">
+                        <!-- Nombre del Meal Prep -->
+                        <div class="mb-4">
+                            <label for="name" class="form-label fw-bold">Nombre del Meal Prep</label>
+                            <input type="text" class="form-control" id="name" name="name" required
+                                placeholder="Ej: Plan de la semana 1" value="{{ meal_prep.name }}">
+                        </div>
+
+                        <!-- Configuración global de comidas -->
+                        <div class="mb-4">
+                            <h5 class="fw-bold mb-3">Configuración Global de Comidas</h5>
+                            <div class="alert alert-info">
+                                <small><i class="fas fa-info-circle"></i> Esta configuración se aplicará por defecto a
+                                    todos los días. Puedes personalizar cada día individualmente más abajo.</small>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="globalDesayuno" checked>
+                                        <label class="form-check-label fw-bold" for="globalDesayuno">
+                                            Desayuno
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="globalAlmuerzo" checked>
+                                        <label class="form-check-label fw-bold" for="globalAlmuerzo">
+                                            Almuerzo
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="globalCena" checked>
+                                        <label class="form-check-label fw-bold" for="globalCena">
+                                            Cena
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="globalSnackCount" class="form-label fw-bold">Snacks (0-3):</label>
+                                    <select class="form-select" id="globalSnackCount">
+                                        <option value="0">0 Snacks</option>
+                                        <option value="1" selected>1 Snack</option>
+                                        <option value="2">2 Snacks</option>
+                                        <option value="3">3 Snacks</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <button type="button" class="btn btn-outline-primary btn-sm" id="applyGlobalConfig">
+                                    <i class="fas fa-sync"></i> Aplicar a Todos los Días
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Planificador semanal -->
+                        <div class="mb-4">
+                            <h5 class="fw-bold mb-3">Planificador Semanal</h5>
+                            <div class="alert alert-warning">
+                                <small><i class="fas fa-utensils"></i>
+                                    <strong>Orden de comidas:</strong> Desayuno → Snack 1 (media mañana) → Almuerzo →
+                                    Snack 2 (tarde) → Cena → Snack 3 (noche)</small>
+                            </div>
+
+                            {% set days = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'] %}
+                            {% set day_names = {'lunes': 'Lunes', 'martes': 'Martes', 'miercoles': 'Miércoles',
+                            'jueves': 'Jueves', 'viernes': 'Viernes', 'sabado': 'Sábado', 'domingo': 'Domingo'} %}
+
+                            {% for day in days %}
+                            <div class="card mb-3">
+                                <div class="card-header bg-light">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-3">
+                                            <h6 class="mb-0 fw-bold text-primary">
+                                                <i class="fas fa-calendar-day"></i> {{ day_names[day] }}
+                                            </h6>
+                                        </div>
+                                        <div class="col-md-9">
+                                            <div class="row g-2">
+                                                <div class="col-auto">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input day-desayuno" type="checkbox"
+                                                            id="{{ day }}_includeDesayuno" 
+                                                            {% if current_meal_data[day]['desayuno'] %}checked{% endif %}>
+                                                        <label class="form-check-label small"
+                                                            for="{{ day }}_includeDesayuno">Desayuno</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input day-almuerzo" type="checkbox"
+                                                            id="{{ day }}_includeAlmuerzo"
+                                                            {% if current_meal_data[day]['almuerzo'] %}checked{% endif %}>
+                                                        <label class="form-check-label small"
+                                                            for="{{ day }}_includeAlmuerzo">Almuerzo</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input day-cena" type="checkbox"
+                                                            id="{{ day }}_includeCena"
+                                                            {% if current_meal_data[day]['cena'] %}checked{% endif %}>
+                                                        <label class="form-check-label small"
+                                                            for="{{ day }}_includeCena">Cena</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-auto">
+                                                    {% set snack_count = (current_meal_data[day]['snack1'] | length) + 
+                                                                        (current_meal_data[day]['snack2'] | length) + 
+                                                                        (current_meal_data[day]['snack3'] | length) %}
+                                                    <select class="form-select form-select-sm day-snacks"
+                                                        id="{{ day }}_snackCount" style="width: auto;">
+                                                        <option value="0" {% if snack_count == 0 %}selected{% endif %}>0 Snacks</option>
+                                                        <option value="1" {% if snack_count == 1 %}selected{% endif %}>1 Snack</option>
+                                                        <option value="2" {% if snack_count == 2 %}selected{% endif %}>2 Snacks</option>
+                                                        <option value="3" {% if snack_count == 3 %}selected{% endif %}>3 Snacks</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row g-3">
+                                        <!-- Desayuno -->
+                                        <div class="col-md-2 desayuno-container" data-day="{{ day }}">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <label class="form-label small fw-bold text-success mb-0">
+                                                    <i class="fas fa-sun"></i> Desayuno
+                                                </label>
+                                                <button type="button" class="btn btn-outline-success btn-sm"
+                                                    data-day="{{ day }}" data-moment="desayuno">
+                                                    <i class="fas fa-plus"></i>
+                                                </button>
+                                            </div>
+                                            <div class="recipes-list">
+                                                {% if current_meal_data[day]['desayuno'] %}
+                                                    {% for recipe_id in current_meal_data[day]['desayuno'] %}
+                                                    <div class="recipe-item mb-2">
+                                                        <select class="form-select form-select-sm"
+                                                            name="{{ day }}_desayuno[]">
+                                                            <option value="">-- Seleccionar --</option>
+                                                            {% for recipe in recipes %}
+                                                            <option value="{{ recipe._id }}" 
+                                                                {% if recipe_id == recipe._id|string %}selected{% endif %}>
+                                                                {{ recipe.title }}
+                                                            </option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    {% endfor %}
+                                                {% else %}
+                                                <div class="recipe-item mb-2">
+                                                    <select class="form-select form-select-sm"
+                                                        name="{{ day }}_desayuno[]">
+                                                        <option value="">-- Seleccionar --</option>
+                                                        {% for recipe in recipes %}
+                                                        <option value="{{ recipe._id }}">{{ recipe.title }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        <!-- Snack 1 -->
+                                        <div class="col-md-2 snack1-container" data-day="{{ day }}">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <label class="form-label small fw-bold text-info mb-0">
+                                                    <i class="fas fa-cookie"></i> Media Mañana
+                                                </label>
+                                                <button type="button" class="btn btn-outline-info btn-sm"
+                                                    data-day="{{ day }}" data-moment="snack1">
+                                                    <i class="fas fa-plus"></i>
+                                                </button>
+                                            </div>
+                                            <div class="recipes-list">
+                                                {% if current_meal_data[day]['snack1'] %}
+                                                    {% for recipe_id in current_meal_data[day]['snack1'] %}
+                                                    <div class="recipe-item mb-2">
+                                                        <select class="form-select form-select-sm"
+                                                            name="{{ day }}_snack1[]">
+                                                            <option value="">-- Seleccionar --</option>
+                                                            {% for recipe in recipes %}
+                                                            <option value="{{ recipe._id }}" 
+                                                                {% if recipe_id == recipe._id|string %}selected{% endif %}>
+                                                                {{ recipe.title }}
+                                                            </option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    {% endfor %}
+                                                {% else %}
+                                                <div class="recipe-item mb-2">
+                                                    <select class="form-select form-select-sm"
+                                                        name="{{ day }}_snack1[]">
+                                                        <option value="">-- Seleccionar --</option>
+                                                        {% for recipe in recipes %}
+                                                        <option value="{{ recipe._id }}">{{ recipe.title }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        <!-- Almuerzo -->
+                                        <div class="col-md-2 almuerzo-container" data-day="{{ day }}">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <label class="form-label small fw-bold text-warning mb-0">
+                                                    <i class="fas fa-utensils"></i> Almuerzo
+                                                </label>
+                                                <button type="button" class="btn btn-outline-warning btn-sm"
+                                                    data-day="{{ day }}" data-moment="almuerzo">
+                                                    <i class="fas fa-plus"></i>
+                                                </button>
+                                            </div>
+                                            <div class="recipes-list">
+                                                {% if current_meal_data[day]['almuerzo'] %}
+                                                    {% for recipe_id in current_meal_data[day]['almuerzo'] %}
+                                                    <div class="recipe-item mb-2">
+                                                        <select class="form-select form-select-sm"
+                                                            name="{{ day }}_almuerzo[]">
+                                                            <option value="">-- Seleccionar --</option>
+                                                            {% for recipe in recipes %}
+                                                            <option value="{{ recipe._id }}" 
+                                                                {% if recipe_id == recipe._id|string %}selected{% endif %}>
+                                                                {{ recipe.title }}
+                                                            </option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    {% endfor %}
+                                                {% else %}
+                                                <div class="recipe-item mb-2">
+                                                    <select class="form-select form-select-sm"
+                                                        name="{{ day }}_almuerzo[]">
+                                                        <option value="">-- Seleccionar --</option>
+                                                        {% for recipe in recipes %}
+                                                        <option value="{{ recipe._id }}">{{ recipe.title }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        <!-- Snack 2 -->
+                                        <div class="col-md-2 snack2-container {% if not current_meal_data[day]['snack2'] %}d-none{% endif %}" data-day="{{ day }}">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <label class="form-label small fw-bold text-info mb-0">
+                                                    <i class="fas fa-cookie"></i> Tarde
+                                                </label>
+                                                <button type="button" class="btn btn-outline-info btn-sm"
+                                                    data-day="{{ day }}" data-moment="snack2">
+                                                    <i class="fas fa-plus"></i>
+                                                </button>
+                                            </div>
+                                            <div class="recipes-list">
+                                                {% if current_meal_data[day]['snack2'] %}
+                                                    {% for recipe_id in current_meal_data[day]['snack2'] %}
+                                                    <div class="recipe-item mb-2">
+                                                        <select class="form-select form-select-sm"
+                                                            name="{{ day }}_snack2[]">
+                                                            <option value="">-- Seleccionar --</option>
+                                                            {% for recipe in recipes %}
+                                                            <option value="{{ recipe._id }}" 
+                                                                {% if recipe_id == recipe._id|string %}selected{% endif %}>
+                                                                {{ recipe.title }}
+                                                            </option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    {% endfor %}
+                                                {% else %}
+                                                <div class="recipe-item mb-2">
+                                                    <select class="form-select form-select-sm"
+                                                        name="{{ day }}_snack2[]">
+                                                        <option value="">-- Seleccionar --</option>
+                                                        {% for recipe in recipes %}
+                                                        <option value="{{ recipe._id }}">{{ recipe.title }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        <!-- Cena -->
+                                        <div class="col-md-2 cena-container" data-day="{{ day }}">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <label class="form-label small fw-bold text-danger mb-0">
+                                                    <i class="fas fa-moon"></i> Cena
+                                                </label>
+                                                <button type="button" class="btn btn-outline-danger btn-sm"
+                                                    data-day="{{ day }}" data-moment="cena">
+                                                    <i class="fas fa-plus"></i>
+                                                </button>
+                                            </div>
+                                            <div class="recipes-list">
+                                                {% if current_meal_data[day]['cena'] %}
+                                                    {% for recipe_id in current_meal_data[day]['cena'] %}
+                                                    <div class="recipe-item mb-2">
+                                                        <select class="form-select form-select-sm" 
+                                                            name="{{ day }}_cena[]">
+                                                            <option value="">-- Seleccionar --</option>
+                                                            {% for recipe in recipes %}
+                                                            <option value="{{ recipe._id }}" 
+                                                                {% if recipe_id == recipe._id|string %}selected{% endif %}>
+                                                                {{ recipe.title }}
+                                                            </option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    {% endfor %}
+                                                {% else %}
+                                                <div class="recipe-item mb-2">
+                                                    <select class="form-select form-select-sm" name="{{ day }}_cena[]">
+                                                        <option value="">-- Seleccionar --</option>
+                                                        {% for recipe in recipes %}
+                                                        <option value="{{ recipe._id }}">{{ recipe.title }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        <!-- Snack 3 -->
+                                        <div class="col-md-2 snack3-container {% if not current_meal_data[day]['snack3'] %}d-none{% endif %}" data-day="{{ day }}">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <label class="form-label small fw-bold text-info mb-0">
+                                                    <i class="fas fa-cookie"></i> Noche
+                                                </label>
+                                                <button type="button" class="btn btn-outline-info btn-sm"
+                                                    data-day="{{ day }}" data-moment="snack3">
+                                                    <i class="fas fa-plus"></i>
+                                                </button>
+                                            </div>
+                                            <div class="recipes-list">
+                                                {% if current_meal_data[day]['snack3'] %}
+                                                    {% for recipe_id in current_meal_data[day]['snack3'] %}
+                                                    <div class="recipe-item mb-2">
+                                                        <select class="form-select form-select-sm"
+                                                            name="{{ day }}_snack3[]">
+                                                            <option value="">-- Seleccionar --</option>
+                                                            {% for recipe in recipes %}
+                                                            <option value="{{ recipe._id }}" 
+                                                                {% if recipe_id == recipe._id|string %}selected{% endif %}>
+                                                                {{ recipe.title }}
+                                                            </option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    {% endfor %}
+                                                {% else %}
+                                                <div class="recipe-item mb-2">
+                                                    <select class="form-select form-select-sm"
+                                                        name="{{ day }}_snack3[]">
+                                                        <option value="">-- Seleccionar --</option>
+                                                        {% for recipe in recipes %}
+                                                        <option value="{{ recipe._id }}">{{ recipe.title }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Botones -->
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('view_meal_prep', meal_prep_id=meal_prep._id) }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-save"></i> Actualizar Meal Prep
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/script_edit_meal_prep.js') }}"></script>
+{% endblock %}

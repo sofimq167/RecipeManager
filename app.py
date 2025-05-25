@@ -487,25 +487,22 @@ def meal_prep_list():
 def view_meal_prep(meal_prep_id):
     user_id = session.get('user_id')
     meal_prep = MealPrep.find_by_id(meal_prep_id)
-    
+
     if not meal_prep or str(meal_prep.user_id) != user_id:
         flash('Meal Prep no encontrado', 'danger')
         return redirect(url_for('meal_prep_list'))
-    
-    # Obtener todas las RecetaMealPrep asociadas
+
     receta_meal_preps = RecetaMealPrep.find_by_meal_prep_id(meal_prep._id)
-    
-    # Organizar por día y momento
+
     days = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo']
     moments = ['desayuno', 'snack1', 'almuerzo', 'snack2', 'cena', 'snack3']
-    
+
     meal_plan = {}
     for day in days:
         meal_plan[day] = {}
         for moment in moments:
             meal_plan[day][moment] = []
-    
-    # Llenar el plan con las recetas
+
     for rmp in receta_meal_preps:
         recipe = Recipe.find_by_id(rmp.recipe_id)
         if recipe:
@@ -513,15 +510,143 @@ def view_meal_prep(meal_prep_id):
                 'recipe': recipe,
                 'recipe_id': str(recipe._id)
             })
-    
+
+    # Calcular macros por día
+    from collections import defaultdict
+    from models import IngredientAmount, Ingredient
+
+    def get_conversion_factor(unit, amount):
+        try:
+            amount = float(amount)
+        except:
+            return 1.0
+        return amount / 100.0 if unit in ['g', 'ml'] else 1.0
+
+    day_macros = defaultdict(lambda: {'protein': 0.0, 'carbs': 0.0, 'fat': 0.0})
+
+    for day in days:
+        for moment in moments:
+            for item in meal_plan[day][moment]:
+                recipe = item['recipe']
+                for ia_id in recipe.ingredient_amount_ids:
+                    ing_amt = IngredientAmount.collection.find_one({'_id': ObjectId(ia_id)})
+                    if not ing_amt:
+                        continue
+                    ingredient = Ingredient.collection.find_one({'_id': ing_amt['ingredient_id']})
+                    if not ingredient:
+                        continue
+                    unit = ingredient.get('unit', 'g')
+                    amount = ing_amt.get('amount', 0)
+                    factor = get_conversion_factor(unit, amount)
+                    day_macros[day]['protein'] += ingredient.get('protein', 0.0) * factor
+                    day_macros[day]['carbs'] += ingredient.get('carbs', 0.0) * factor
+                    day_macros[day]['fat'] += ingredient.get('fat', 0.0) * factor
+
     return render_template('view_meal_prep.html',
                            user_name=session.get('user_name'),
                            meal_prep=meal_prep,
                            meal_plan=meal_plan,
-                           days=days)
+                           days=days,
+                           day_macros=day_macros)
 
 
+@app.route('/meal-prep/edit/<meal_prep_id>', methods=['GET', 'POST'])
+@login_required
+def edit_meal_prep(meal_prep_id):
+    user_id = session.get('user_id')
+    meal_prep = MealPrep.find_by_id(meal_prep_id)
+    
+    if not meal_prep or str(meal_prep.user_id) != user_id:
+        flash('No tienes permiso para editar este meal prep', 'danger')
+        return redirect(url_for('meal_prep_list'))
+    
+    user_recipes = Recipe.find_by_user_id(user_id)
+    
+    if request.method == 'POST':
+        name = request.form.get('name')
+        
+        if not name:
+            flash('El nombre del meal prep es obligatorio', 'danger')
+            return render_template('edit_meal_prep.html',
+                                   user_name=session.get('user_name'),
+                                   recipes=user_recipes,
+                                   meal_prep=meal_prep)
+        
+        # Eliminar las RecetaMealPrep existentes
+        RecetaMealPrep.delete_by_meal_prep_id(meal_prep._id)
+        
+        # Actualizar el nombre del meal prep
+        meal_prep.name = name
+        
+        # Crear nuevas asignaciones del formulario
+        receta_meal_prep_ids = []
+        days = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo']
+        
+        for day in days:
+            moments = ['desayuno', 'snack1', 'snack2', 'snack3', 'almuerzo', 'cena']
+            
+            for moment in moments:
+                recipe_ids = request.form.getlist(f'{day}_{moment}[]')
+                for recipe_id in recipe_ids:
+                    if recipe_id:
+                        receta_meal_prep = RecetaMealPrep(
+                            recipe_id=recipe_id,
+                            day=day,
+                            moment=moment,
+                            meal_prep_id=meal_prep._id
+                        )
+                        receta_meal_prep.save()
+                        receta_meal_prep_ids.append(str(receta_meal_prep._id))
+        
+        # Actualizar el meal prep con los nuevos IDs
+        meal_prep.receta_meal_prep_ids = receta_meal_prep_ids
+        meal_prep.save()
+        
+        flash('¡Meal Prep actualizado exitosamente!', 'success')
+        return redirect(url_for('view_meal_prep', meal_prep_id=meal_prep._id))
+    
+    # Para GET: obtener las RecetaMealPrep existentes
+    receta_meal_preps = RecetaMealPrep.find_by_meal_prep_id(meal_prep._id)
+    
+    # Organizar las recetas por día y momento
+    days = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo']
+    moments = ['desayuno', 'snack1', 'almuerzo', 'snack2', 'cena', 'snack3']
+    
+    current_meal_data = {}
+    for day in days:
+        current_meal_data[day] = {}
+        for moment in moments:
+            current_meal_data[day][moment] = []
+    
+    # Llenar con los datos actuales
+    for rmp in receta_meal_preps:
+        current_meal_data[rmp.day][rmp.moment].append(str(rmp.recipe_id))
+    
+    return render_template('edit_meal_prep.html',
+                           user_name=session.get('user_name'),
+                           recipes=user_recipes,
+                           meal_prep=meal_prep,
+                           current_meal_data=current_meal_data)
 
+@app.route('/meal-prep/delete/<meal_prep_id>')
+@login_required
+def delete_meal_prep(meal_prep_id):
+    user_id = session.get('user_id')
+    
+    # Verificar que el meal prep existe y pertenece al usuario
+    meal_prep = MealPrep.find_by_id(meal_prep_id)
+    if not meal_prep or str(meal_prep.user_id) != user_id:
+        flash("No tienes permiso para eliminar este meal prep", "danger")
+        return redirect(url_for("meal_prep_list"))
+    
+    # Eliminar todas las RecetaMealPrep asociadas
+    RecetaMealPrep.delete_by_meal_prep_id(meal_prep._id)
+    
+    # Eliminar el meal prep
+    MealPrep.collection.delete_one({"_id": ObjectId(meal_prep_id), "user_id": ObjectId(user_id)})
+    
+    flash("Meal Prep eliminado correctamente", "success")
+    return redirect(url_for("meal_prep_list"))
 
 if __name__ == '__main__':
     #app.run(debug=Config.DEBUG)
