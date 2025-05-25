@@ -7,7 +7,7 @@
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div class="card">
-                <div class="card-header bg-plan text-dark">
+                <div class="card-header bg-breakfast text-white">
                     <h4 class="mb-0"><i class="fas fa-edit"></i> Editar Meal Prep: {{ meal_prep.name }}</h4>
                 </div>
                 <div class="card-body">
@@ -22,8 +22,8 @@
                         <!-- Configuración global de comidas -->
                         <div class="mb-4">
                             <h5 class="fw-bold mb-3">Configuración Global de Comidas</h5>
-                            <div class="alert alert-info">
-                                <small><i class="fas fa-info-circle"></i> Esta configuración se aplicará por defecto a
+                            <div class="alert bg-plan">
+                                <small class="icon-color-plan"><i class="fas fa-info-circle"></i> Esta configuración se aplicará por defecto a
                                     todos los días. Puedes personalizar cada día individualmente más abajo.</small>
                             </div>
                             <div class="row">
@@ -71,8 +71,8 @@
                         <!-- Planificador semanal -->
                         <div class="mb-4">
                             <h5 class="fw-bold mb-3">Planificador Semanal</h5>
-                            <div class="alert alert-warning">
-                                <small><i class="fas fa-utensils"></i>
+                            <div class="alert bg-plan">
+                                <small class="icon-color-plan"><i class="fas fa-utensils"></i>
                                     <strong>Orden de comidas:</strong> Desayuno → Snack 1 (media mañana) → Almuerzo →
                                     Snack 2 (tarde) → Cena → Snack 3 (noche)</small>
                             </div>
@@ -86,7 +86,7 @@
                                 <div class="card-header bg-light">
                                     <div class="row align-items-center">
                                         <div class="col-md-3">
-                                            <h6 class="mb-0 fw-bold text-primary">
+                                            <h6 class="mb-0 fw-bold color-dinner">
                                                 <i class="fas fa-calendar-day"></i> {{ day_names[day] }}
                                             </h6>
                                         </div>
@@ -140,10 +140,10 @@
                                         <!-- Desayuno -->
                                         <div class="col-md-2 desayuno-container" data-day="{{ day }}">
                                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                                <label class="form-label small fw-bold text-success mb-0">
+                                                <label class="form-label small fw-bold text-success mb-0 color-breakfast">
                                                     <i class="fas fa-sun"></i> Desayuno
                                                 </label>
-                                                <button type="button" class="btn btn-outline-success btn-sm"
+                                                <button type="button" class="btn btn-outline-danger btn-sm"
                                                     data-day="{{ day }}" data-moment="desayuno">
                                                     <i class="fas fa-plus"></i>
                                                 </button>
@@ -181,10 +181,10 @@
                                         <!-- Snack 1 -->
                                         <div class="col-md-2 snack1-container" data-day="{{ day }}">
                                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                                <label class="form-label small fw-bold text-info mb-0">
+                                                <label class="form-label small fw-bold text-info mb-0 color-snack">
                                                     <i class="fas fa-cookie"></i> Media Mañana
                                                 </label>
-                                                <button type="button" class="btn btn-outline-info btn-sm"
+                                                <button type="button" class="btn btn-outline-danger btn-sm"
                                                     data-day="{{ day }}" data-moment="snack1">
                                                     <i class="fas fa-plus"></i>
                                                 </button>
@@ -222,10 +222,10 @@
                                         <!-- Almuerzo -->
                                         <div class="col-md-2 almuerzo-container" data-day="{{ day }}">
                                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                                <label class="form-label small fw-bold text-warning mb-0">
+                                                <label class="form-label small fw-bold text-info mb-0 color-lunch">
                                                     <i class="fas fa-utensils"></i> Almuerzo
                                                 </label>
-                                                <button type="button" class="btn btn-outline-warning btn-sm"
+                                                <button type="button" class="btn btn-outline-danger btn-sm"
                                                     data-day="{{ day }}" data-moment="almuerzo">
                                                     <i class="fas fa-plus"></i>
                                                 </button>
@@ -263,10 +263,10 @@
                                         <!-- Snack 2 -->
                                         <div class="col-md-2 snack2-container {% if not current_meal_data[day]['snack2'] %}d-none{% endif %}" data-day="{{ day }}">
                                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                                <label class="form-label small fw-bold text-info mb-0">
+                                                <label class="form-label small fw-bold text-info mb-0 color-snack">
                                                     <i class="fas fa-cookie"></i> Tarde
                                                 </label>
-                                                <button type="button" class="btn btn-outline-info btn-sm"
+                                                <button type="button" class="btn btn-outline-danger btn-sm"
                                                     data-day="{{ day }}" data-moment="snack2">
                                                     <i class="fas fa-plus"></i>
                                                 </button>
@@ -304,7 +304,7 @@
                                         <!-- Cena -->
                                         <div class="col-md-2 cena-container" data-day="{{ day }}">
                                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                                <label class="form-label small fw-bold text-danger mb-0">
+                                                <label class="form-label small fw-bold text-info mb-0 color-dinner">
                                                     <i class="fas fa-moon"></i> Cena
                                                 </label>
                                                 <button type="button" class="btn btn-outline-danger btn-sm"
@@ -344,10 +344,10 @@
                                         <!-- Snack 3 -->
                                         <div class="col-md-2 snack3-container {% if not current_meal_data[day]['snack3'] %}d-none{% endif %}" data-day="{{ day }}">
                                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                                <label class="form-label small fw-bold text-info mb-0">
+                                                <label class="form-label small fw-bold text-info mb-0 color-snack">
                                                     <i class="fas fa-cookie"></i> Noche
                                                 </label>
-                                                <button type="button" class="btn btn-outline-info btn-sm"
+                                                <button type="button" class="btn btn-outline-danger btn-sm"
                                                     data-day="{{ day }}" data-moment="snack3">
                                                     <i class="fas fa-plus"></i>
                                                 </button>
@@ -389,10 +389,10 @@
 
                         <!-- Botones -->
                         <div class="d-flex justify-content-between">
-                            <a href="{{ url_for('view_meal_prep', meal_prep_id=meal_prep._id) }}" class="btn btn-secondary">
+                            <a href="{{ url_for('view_meal_prep', meal_prep_id=meal_prep._id) }}" class="btn btn-secondary btn-cancelar">
                                 <i class="fas fa-arrow-left"></i> Cancelar
                             </a>
-                            <button type="submit" class="btn btn-warning">
+                            <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-save"></i> Actualizar Meal Prep
                             </button>
                         </div>

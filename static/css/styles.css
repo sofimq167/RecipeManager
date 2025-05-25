@@ -350,3 +350,34 @@ footer {
 .bg-snack{
     background-color: #ac763d;
 }
+
+.icon-color-plan{
+    color: #ac763d;
+}
+
+.form-check-input:checked {
+    background-color: var(--secondary-color);
+    border-color:  var(--secondary-color);
+}
+
+.color-breakfast{
+    color: var(--primary-color)!important;
+}
+
+.color-lunch{
+    color: var(--secondary-color)!important;
+}
+.color-dinner{
+    color: var(--dark-color)!important;
+}
+.color-snack{
+    color: #ac763d!important;
+}
+
+.btn-cancelar{
+    border-radius: 30px !important;
+    padding: 10px 25px!important;
+    font-weight: 600!important;
+    transition: all 0.3sease!important;
+    border-color: #555;
+}
