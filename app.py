@@ -649,5 +649,4 @@ def delete_meal_prep(meal_prep_id):
     return redirect(url_for("meal_prep_list"))
 
 if __name__ == '__main__':
-    #app.run(debug=Config.DEBUG)
-    app.run(debug=True)
+    app.run(debug=False, host='0.0.0.0', port=5000)
